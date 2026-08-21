@@ -12,6 +12,9 @@ export const metadata = {
   title: "Lute Diamonds | Premium Handcrafted Jewellery",
   description:
     "Handcrafted, ethically sourced diamond jewellery from Lute Diamonds — wedding rings, pendants and earrings, made in South Africa since 2006.",
+    icons:{
+      icon:"/favicon.png"
+    }
 };
 
 export default function RootLayout({ children }) {

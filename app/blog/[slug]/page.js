@@ -39,15 +39,15 @@ export default async function BlogPostPage({ params }) {
   if (!post) notFound();
 
   return (
-    <article className="container-lute max-w-3xl pb-20">
+    <article className=" pb-20">
       <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: post.title }]} />
-      <h1 className="font-serif text-3xl mb-6">{post.title}</h1>
+      <h1 className="font-serif text-3xl mb-6 container-lute max-w-3xl mt-20">{post.title}</h1>
       {post.coverImage && (
-        <div className="aspect-video bg-gold-light relative overflow-hidden rounded-lg mb-8">
+        <div className="aspect-video bg-gold-light relative overflow-hidden rounded-lg mb-8 container-lute max-w-3xl">
           <Image src={post.coverImage} alt={post.title} fill sizes="768px" className="object-cover" priority />
         </div>
       )}
-      <div className="rich-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+      <div className="rich-content container-lute max-w-3xl" dangerouslySetInnerHTML={{ __html: post.content }} />
     </article>
   );
 }

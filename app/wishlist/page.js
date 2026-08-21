@@ -11,10 +11,10 @@ export default async function WishlistPage() {
 
   if (!session) {
     return (
-      <div className="container-lute py-20 text-center">
+      <div className=" py-20 text-center">
         <Breadcrumbs items={[{ label: "Wishlist" }]} />
-        <p className="text-muted mb-6">Sign in to view and manage your wishlist.</p>
-        <Link href="/account/login?next=/wishlist" className="btn-gold px-6 py-3 rounded text-sm">
+        <p className="text-muted mb-6 container-lute">Sign in to view and manage your wishlist.</p>
+        <Link href="/account/login?next=/wishlist" className="btn-gold px-6 py-3 rounded text-sm container-lute">
           Sign In
         </Link>
       </div>
@@ -28,14 +28,14 @@ export default async function WishlistPage() {
   const products = toPlain(user?.wishlist || []);
 
   return (
-    <div className="container-lute pb-20">
+    <div className=" pb-20">
       <Breadcrumbs items={[{ label: "Wishlist" }]} />
-      <h1 className="font-serif text-3xl mb-8">Wishlist</h1>
+      <h1 className="font-serif text-3xl mb-8 container-lute mt-20">Wishlist</h1>
 
       {products.length === 0 ? (
-        <p className="text-muted">Your wishlist is empty.</p>
+        <p className="text-muted container-lute">Your wishlist is empty.</p>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 container-lute">
           {products.map((p) => (
             <ProductCard key={p._id} product={p} initialWishlisted={true} />
           ))}

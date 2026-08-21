@@ -22,19 +22,18 @@ export default function CartPage() {
   const total = subtotal + shippingFee;
 
   return (
-    <div className="container-lute pb-20">
+    <div className=" pb-20">
       <Breadcrumbs items={[{ label: "Cart" }]} />
-      <h1 className="font-serif text-3xl mb-8">Cart</h1>
 
       {items.length === 0 ? (
-        <div className="py-16 text-center">
+        <div className="py-16 text-center container-lute">
           <p className="text-muted mb-6">Your cart is currently empty.</p>
           <Link href="/shop" className="btn-gold px-6 py-3 rounded text-sm">
             Return to shop
           </Link>
         </div>
       ) : (
-        <div className="grid md:grid-cols-[1fr_320px] gap-12">
+        <div className="grid md:grid-cols-[1fr_320px] gap-12 container-lute mt-20">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border text-left text-muted">

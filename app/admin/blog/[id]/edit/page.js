@@ -11,7 +11,6 @@ export default async function EditBlogPostPage({ params }) {
 
   return (
     <div>
-      <h1 className="font-serif text-3xl mb-8">Edit Blog Post</h1>
       <BlogForm initialPost={JSON.parse(JSON.stringify(post))} />
     </div>
   );

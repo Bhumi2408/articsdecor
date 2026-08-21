@@ -33,12 +33,11 @@ export default function OrderTrackingPage() {
   }
 
   return (
-    <div className="container-lute max-w-xl pb-20">
+    <div className=" pb-20">
       <Breadcrumbs items={[{ label: "Order Tracking" }]} />
-      <h1 className="font-serif text-3xl mb-4">Order Tracking</h1>
-      <p className="text-muted mb-8">Enter your order number and the email used at checkout to view its status.</p>
+      <p className="text-muted mb-8 container-lute max-w-xl mt-20">Enter your order number and the email used at checkout to view its status.</p>
 
-      <form onSubmit={handleSubmit} className="space-y-4 border border-border rounded-lg p-6">
+      <form onSubmit={handleSubmit} className="space-y-4 border border-border rounded-lg p-6 container-lute max-w-xl mt-20">
         <div>
           <label className="block text-sm mb-1">Order Number</label>
           <input

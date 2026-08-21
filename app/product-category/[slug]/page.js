@@ -53,7 +53,7 @@ export default async function CategoryPage({ params, searchParams }) {
   }
 
   return (
-    <div className="container-lute">
+    <div>
       <Breadcrumbs items={[{ label: category.name }]} />
 
       {category.image && (
@@ -62,18 +62,18 @@ export default async function CategoryPage({ params, searchParams }) {
         </div>
       )}
 
-      <h1 className="font-serif text-3xl mb-2">{category.name}</h1>
-      {category.description && <p className="text-muted max-w-2xl mb-8">{category.description}</p>}
+      <h1 className="font-serif text-3xl container-lute mt-20 mb-2">{category.name}</h1>
+      {category.description && <p className="text-muted max-w-2xl container-lute mb-8">{category.description}</p>}
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between container-lute mb-6">
         <p className="text-sm text-muted">{total} products</p>
         <SortSelect />
       </div>
 
       {items.length === 0 ? (
-        <p className="text-muted pb-16">No products found in this category yet.</p>
+        <p className="text-muted pb-16 container-lute">No products found in this category yet.</p>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 container-lute mb-20">
           {items.map((p) => (
             <ProductCard key={p._id} product={p} initialWishlisted={wishlistIds.includes(p._id.toString())} />
           ))}

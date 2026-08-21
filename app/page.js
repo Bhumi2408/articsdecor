@@ -6,23 +6,21 @@ import Category from "@/models/Category";
 import ProductCard from "@/components/ProductCard";
 import { getWishlistIds } from "@/lib/wishlist";
 import { toPlain } from "@/lib/serialize";
+import HeroSlider from "@/components/HeroSlider";
+import PromoBanner from "@/components/PromoBanner";
+import Marquee from "@/components/Marquee";
+import MoreAboutUs from "@/components/MoreAboutUs";
+import BestSellersSection from "@/components/BestSellersSection";
+import CategoryBanner from "@/components/CategoryBanner";
+import TrendingWeek from "@/components/TendingWeek";
+import HandmadeJewellerySection from "@/components/HandmadeJewellerySection";
+import Testimonials from "@/components/Testimonials";
+import CuratedYou from "@/components/CuratedYou";
+import LatestBlog from "@/components/LatestBlog";
+import GalleryStrip from "@/components/GalleryStrip";
 
 export const revalidate = 0;
 
-const TESTIMONIALS = [
-  {
-    name: "Nomvula K.",
-    quote: "The craftsmanship on my engagement ring is beyond anything I imagined. Truly a piece to treasure forever.",
-  },
-  {
-    name: "Johan P.",
-    quote: "Excellent service from start to finish, and the certificate gave us total peace of mind.",
-  },
-  {
-    name: "Aisha M.",
-    quote: "Beautiful, ethically sourced stones and a team that genuinely cares about getting it right.",
-  },
-];
 
 export default async function HomePage() {
   await connectDB();
@@ -38,82 +36,126 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="relative bg-gold-light">
-        <div className="container-lute py-24 md:py-32 flex flex-col items-start gap-6 max-w-2xl">
-          <span className="uppercase tracking-widest text-xs text-gold-dark">Handcrafted since 2006</span>
-          <h1 className="font-serif text-4xl md:text-5xl leading-tight">
-            Better Things, <br /> in a Better Way
-          </h1>
-          <p className="text-muted text-base md:text-lg">
-            Ethically sourced diamonds and precious stones, handcrafted in South Africa into
-            wedding rings, pendants and earrings that last a lifetime.
-          </p>
-          <Link href="/shop" className="btn-gold px-8 py-3 rounded text-sm">
-            Shop the Collection
-          </Link>
-        </div>
-      </section>
 
-      <section className="container-lute py-16">
-        <h2 className="font-serif text-2xl text-center mb-10">Shop by Category</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {(categories.length ? categories : PLACEHOLDER_CATEGORIES).map((cat, i) => (
-            <Link
-              key={cat.slug}
-              href={`/product-category/${cat.slug}`}
-              className="group border border-border rounded-lg overflow-hidden bg-surface"
-            >
-              <div className="aspect-square bg-gold-light relative overflow-hidden">
-                <Image
-                  src={cat.image || `https://placehold.co/400x400/f3e9d2/a9812f.png?text=${encodeURIComponent(cat.name)}`}
-                  alt={cat.name}
-                  fill
-                  sizes="25vw"
-                  priority={i < 4}
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="p-3 text-center font-medium text-sm">{cat.name}</div>
-            </Link>
-          ))}
-        </div>
-      </section>
 
-      <section className="bg-surface border-y border-border py-16">
-        <div className="container-lute">
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="font-serif text-2xl">The Iconic Collection</h2>
-            <Link href="/shop" className="text-sm text-gold hover:text-gold-dark">
-              View all &rarr;
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {products.map((p) => (
-              <ProductCard key={p._id} product={p} initialWishlisted={wishlistIds.includes(p._id.toString())} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <HeroSlider />
 
-      <section className="container-lute py-16">
-        <h2 className="font-serif text-2xl text-center mb-10">What Our Customers Say</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((t) => (
-            <div key={t.name} className="border border-border rounded-lg p-6 text-center">
-              <p className="text-gold mb-3">★★★★★</p>
-              <p className="text-sm text-muted italic mb-4">&ldquo;{t.quote}&rdquo;</p>
-              <p className="text-sm font-medium">{t.name}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <PromoBanner
+        items={[
+          {
+            tag: "Our rings",
+            title: "Add These To Your Style Roster",
+            description: "Handcrafted rings featuring rare sapphires and diamonds, made to shine for a lifetime — only at Lute Diamonds.",
+            buttonText: "Shop now",
+            buttonLink: "/product-category/wedding-rings",
+            image: "/home/ring-banner.png",
+          },
+          {
+            tag: "Favourite picks",
+            title: "Unique Diamond Pendants",
+            description: "From classic diamonds to rare, one-of-a-kind gemstones, find a pendant that tells your story — only at Lute Diamonds.",
+            buttonText: "Shop now",
+            buttonLink: "/product-category/pendants",
+            image: "/home/pendants-banner.png",
+          },
+        ]}
+      />
+
+      <Marquee
+        items={[
+          "The Iconic Collection",
+          "Color In Your Look",
+          "Elegant And Everlasting",
+          "Black Friday Offer",
+        ]}
+      />
+
+      <MoreAboutUs />
+
+      <BestSellersSection products={products} />
+
+      <CategoryBanner
+        items={[
+          {
+            image: "/home/ring-category.png",
+            title: "One-Of-A-Kinds",
+            category: "Rings",
+            description: "Featuring unique and hand-sourced gemstones from all over the world.",
+            buttonText: "See more products",
+            buttonLink: "/product-category/wedding-rings",
+          },
+          {
+            image: "/home/pendant-category.png",
+            title: "High Tide Looks",
+            category: "Pendant",
+            description: "Featuring unique and hand-sourced gemstones from all over the world.",
+            buttonText: "See more products",
+            buttonLink: "/product-category/pendants",
+          },
+          {
+            image: "/home/earring-category.png",
+            title: "New Organic Dome",
+            category: "Earrings",
+            description: "From solid gold staples to diamond jewelry, browse our most-loved pieces.",
+            buttonText: "See more products",
+            buttonLink: "/product-category/earrings",
+          },
+          {
+            image: "/home/rings-category.jpeg",
+            title: "The Tiffany Icons",
+            category: "Rings",
+            description: "Rings is a symbol of serenity, and alignment with the pace of nature.",
+            buttonText: "See more products",
+            buttonLink: "/product-category/wedding-rings",
+          },
+        ]}
+      />
+
+      <TrendingWeek products={products} />
+
+      <PromoBanner
+        items={[
+          {
+            tag: "TIMELESS ELEGANCE",
+            title: "Rings Made For Forever",
+            description: "Discover handcrafted rings set with brilliant diamonds, designed to celebrate life's most precious moments.",
+            buttonText: "Shop now",
+            buttonLink: "/product-category/wedding-rings",
+            image: "/home/banner-ring.jpeg",
+          },
+          {
+            tag: "SIGNATURE COLLECTION",
+            title: "Sparkle In Every Detail",
+            description: "Delicate diamond studs crafted to add a touch of brilliance to your everyday look.",
+            buttonText: "Shop now",
+            buttonLink: "/product-category/earrings",
+            image: "/home/banner-earring.jpeg",
+          },
+        ]}
+      />
+
+      <Marquee
+        items={[
+          "Handcrafted Jewellery, Made To Last",
+          "Ethically Sourced Diamonds & Gemstones",
+          "Proudly Serving South Africa",
+        ]}
+      />
+
+      <HandmadeJewellerySection
+        image="/home/bannerhandmade.jpeg"
+        tag="Our challenge to do better"
+        title="All Of Our Jewellery Is Handmade."
+        description="A gift they'll treasure forever, Lute Diamonds created diamonds jewellery combines precious metals with laboratory grown diamonds to form captivating collections."
+        buttonText="Explore More"
+        buttonLink="/about"
+      />
+
+      <Testimonials />
+      <CuratedYou />
+      <LatestBlog />
+      <GalleryStrip />
     </div>
   );
 }
 
-const PLACEHOLDER_CATEGORIES = [
-  { slug: "wedding-rings", name: "Wedding Rings" },
-  { slug: "pendants", name: "Pendants" },
-  { slug: "earrings", name: "Earrings" },
-  { slug: "jewellery", name: "Jewellery" },
-];

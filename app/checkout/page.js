@@ -93,11 +93,10 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container-lute pb-20">
+    <div className=" pb-20">
       <Breadcrumbs items={[{ label: "Checkout" }]} />
-      <h1 className="font-serif text-3xl mb-8">Checkout</h1>
 
-      <div className="grid md:grid-cols-[1fr_360px] gap-12">
+      <div className="grid md:grid-cols-[1fr_360px] gap-12 container-lute mt-20">
         <form onSubmit={handleSubmit} className="space-y-4">
           <h2 className="font-serif text-xl mb-2">Shipping Details</h2>
 
