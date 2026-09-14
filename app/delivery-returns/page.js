@@ -1,12 +1,13 @@
 // app/refund-returns/page.jsx
+
 import Link from "next/link";
 import LegalPage, { P, UL, LI, Note } from "@/components/LegalPage";
 import { COMPANY } from "@/lib/company";
 
 export const metadata = {
-  title: "Refund & Return Policy | Lute Diamonds",
+  title: "Return & Refund Policy - Artics Decorr",
   description:
-    "How to return, exchange or get a refund on a Lute Diamonds piece, including your cooling-off rights under South African law.",
+    "Read the Artics Decorr return, replacement, cancellation and refund policy for outdoor furniture and decor products.",
 };
 
 const SECTIONS = [
@@ -16,248 +17,415 @@ const SECTIONS = [
     body: (
       <>
         <P>
-          Every piece we sell is handcrafted and inspected before it leaves our workshop in
-          Kimberley. If something is not right, we want to fix it. This policy explains when you
-          can return a piece, how to do it, and how quickly you will get your money back.
+          At Artics Decorr, we take pride in delivering thoughtfully designed
+          outdoor furniture and decor made for comfort, durability and everyday
+          outdoor living. Every order is carefully checked before dispatch.
         </P>
+
         <P>
-          Nothing in this policy takes away the rights you have under the Consumer Protection Act
-          68 of 2008 (CPA) or the Electronic Communications and Transactions Act 25 of 2002 (ECTA).
-          Where this policy is more generous than the law, this policy applies.
+          If your order arrives damaged, defective, incorrect, or you have a
+          genuine issue with your purchase, please contact us and our team will
+          help you with the appropriate resolution.
         </P>
-      </>
-    ),
-  },
-  {
-    id: "cooling-off",
-    heading: `Your ${COMPANY.coolingOffDays}-day cooling-off right`,
-    body: (
-      <>
-        <P>
-          Because you are buying online, section 44 of ECTA gives you the right to cancel your
-          order without giving a reason and without penalty within{" "}
-          {COMPANY.coolingOffDays} days of receiving the goods. You simply need to send the piece
-          back to us in the condition described below.
-        </P>
-        <P>
-          We will refund you in full within 30 days of the cancellation. You are responsible for
-          the cost of returning the goods to us, and we strongly recommend using an insured,
-          tracked courier given the value of our pieces.
-        </P>
+
         <Note>
-          The cooling-off right does not apply to goods made to your own specification or clearly
-          personalised — for example a bespoke design, an engraved piece, or a ring resized to
-          your finger before dispatch.
+          This policy applies to products purchased directly from Artics Decorr
+          through our website or authorised sales channels. Custom-made and
+          made-to-order products may be subject to different return conditions.
         </Note>
       </>
     ),
   },
+
   {
-    id: "change-of-mind",
-    heading: `${COMPANY.returnWindowDays}-day change-of-mind returns`,
+    id: "return-window",
+    heading: "Return & Replacement Window",
     body: (
       <>
         <P>
-          Beyond the cooling-off period, we give you a total of {COMPANY.returnWindowDays} days
-          from the date of delivery to return an unworn piece for a refund or exchange. The
-          request must reach us within those {COMPANY.returnWindowDays} days, even if the parcel
-          arrives with us shortly afterwards.
+          Standard products may be eligible for return or replacement depending
+          on the condition of the product and the reason for the return. Please
+          contact us as soon as possible after delivery if you have any issue
+          with your order.
         </P>
-        <P>To be accepted, the piece must come back to us:</P>
+
+        <P>
+          For products that arrive damaged, defective or incorrect, please
+          notify us within the applicable period mentioned in your order
+          confirmation or delivery documentation, along with clear photographs
+          or videos of the product and packaging.
+        </P>
+
+        <P>
+          Products must generally be returned in unused condition, with their
+          original packaging and accessories wherever applicable.
+        </P>
+      </>
+    ),
+  },
+
+  {
+    id: "eligible",
+    heading: "When a Return or Replacement May Be Accepted",
+    body: (
+      <>
+        <P>
+          A return or replacement request may be considered in the following
+          situations:
+        </P>
+
         <UL>
-          <LI>Unworn, unaltered and free of scratches, sizing marks or body oils</LI>
-          <LI>In its original box and protective packaging</LI>
+          <LI>The product received is damaged during transit.</LI>
+          <LI>The product has a genuine manufacturing defect.</LI>
+          <LI>The product received is different from what was ordered.</LI>
           <LI>
-            With every item it was sent with — certificates, grading reports, valuation
-            documents, care cards and tags still attached
+            The product is missing an essential part or accessory supplied with
+            the order.
           </LI>
-          <LI>With proof of purchase or your order number</LI>
+          <LI>
+            The product has a significant issue that prevents it from being
+            used for its intended purpose.
+          </LI>
         </UL>
+
         <P>
-          Pieces that show wear, have been altered by another jeweller, or arrive without their
-          certification cannot be accepted and will be returned to you at your cost.
+          Our team may request photographs, videos, packaging details, order
+          information or other information required to assess the issue.
         </P>
       </>
     ),
   },
+
   {
-    id: "exclusions",
-    heading: "What we cannot take back",
+    id: "condition",
+    heading: "Condition of Returned Products",
     body: (
       <>
-        <P>The following are final sale and cannot be returned for a change of mind:</P>
-        <UL>
-          <LI>Bespoke and custom-commissioned pieces</LI>
-          <LI>Engraved or otherwise personalised items</LI>
-          <LI>Rings that have been resized, whether by us or by another jeweller</LI>
-          <LI>Pierced earrings, once the hygiene seal has been broken</LI>
-          <LI>Loose polished stones cut or selected to your specification</LI>
-          <LI>Gift cards and vouchers</LI>
-        </UL>
         <P>
-          This exclusion does not apply if the item is faulty, damaged or not what you ordered —
-          see <a href="#faulty" className="text-[#BF9A3A] hover:underline">Faulty or incorrect items</a> below.
+          Where a return is approved, the product should be returned in
+          reasonable condition along with its original packaging, accessories,
+          cushions, covers and other components supplied with the order, where
+          applicable.
+        </P>
+
+        <UL>
+          <LI>The product should not have been intentionally damaged.</LI>
+          <LI>
+            The product should not have been modified or altered after
+            delivery.
+          </LI>
+          <LI>
+            All accessories and components supplied with the product should be
+            included.
+          </LI>
+          <LI>
+            Original packaging should be retained wherever possible, especially
+            in the case of transit-related claims.
+          </LI>
+        </UL>
+
+        <P>
+          Products showing damage caused after delivery due to misuse,
+          negligence, improper installation, accidents, exposure to unsuitable
+          conditions, or unauthorised modifications may not qualify for a
+          return or replacement.
         </P>
       </>
     ),
   },
+
+  {
+    id: "non-returnable",
+    heading: "Products That May Not Be Returnable",
+    body: (
+      <>
+        <P>
+          Certain products may not be eligible for return or cancellation once
+          production or customisation has started.
+        </P>
+
+        <UL>
+          <LI>Custom-made or specially commissioned furniture.</LI>
+          <LI>Made-to-order products.</LI>
+          <LI>Products customised according to specific customer requirements.</LI>
+          <LI>
+            Products that have been modified, assembled or altered at the
+            customer's request.
+          </LI>
+          <LI>
+            Products that have been used, damaged or improperly maintained
+            after delivery.
+          </LI>
+        </UL>
+
+        <Note>
+          If a custom or made-to-order product arrives damaged or has a genuine
+          manufacturing defect, please contact us. Such issues will be
+          reviewed separately.
+        </Note>
+      </>
+    ),
+  },
+
   {
     id: "how-to-return",
-    heading: "How to start a return",
+    heading: "How to Request a Return",
     body: (
       <>
+        <P>
+          To start a return, replacement or damage claim, please contact our
+          customer support team with the following information:
+        </P>
+
         <UL>
-          <LI>
-            Email{" "}
-            <a href={`mailto:${COMPANY.email}`} className="text-[#BF9A3A] hover:underline">
-              {COMPANY.email}
-            </a>{" "}
-            with your order number, the item you want to return, and the reason. Photographs help
-            us resolve faults faster.
-          </LI>
-          <LI>
-            We will reply within two business days with a return authorisation and the exact
-            address to send the parcel to. Please do not post anything back before you have this
-            — unauthorised parcels may be refused.
-          </LI>
-          <LI>
-            Pack the piece in its original box, include all documentation, and send it with an
-            insured, tracked courier. Insure it for the full purchase value.
-          </LI>
-          <LI>
-            Send us the tracking number. Until the parcel reaches us, it remains your
-            responsibility.
-          </LI>
+          <LI>Your order number.</LI>
+          <LI>Name and contact details used for the order.</LI>
+          <LI>Name of the product you are contacting us about.</LI>
+          <LI>Reason for the return or replacement request.</LI>
+          <LI>Clear photographs or videos showing the issue.</LI>
         </UL>
+
+        <P>
+          Our team will review the request and guide you through the next
+          steps. Please do not send a product back without receiving return
+          instructions from our team.
+        </P>
       </>
     ),
   },
+
+  {
+    id: "damaged",
+    heading: "Products Damaged in Transit",
+    body: (
+      <>
+        <P>
+          We carefully pack our products before dispatch. However, furniture
+          and decor items can sometimes be affected during transportation.
+        </P>
+
+        <P>
+          If the outer packaging appears torn, crushed, opened or otherwise
+          damaged at the time of delivery, please photograph the packaging
+          before opening it wherever possible.
+        </P>
+
+        <P>
+          After opening the package, inspect the product and inform us promptly
+          if you notice any damage. Please provide photographs or videos of the
+          packaging as well as the affected product so that we can assess the
+          issue and coordinate the appropriate resolution.
+        </P>
+
+        <Note>
+          Keeping the original packaging until you are satisfied with the
+          condition of your order can help us process transit-related claims
+          more efficiently.
+        </Note>
+      </>
+    ),
+  },
+
+  {
+    id: "wrong-product",
+    heading: "Wrong or Missing Product",
+    body: (
+      <>
+        <P>
+          If you receive a product that differs from your order, or if an item
+          or essential component is missing, please contact us with your order
+          number and photographs of the received shipment.
+        </P>
+
+        <P>
+          Once verified, Artics Decorr will work with you to arrange the
+          appropriate replacement or resolution.
+        </P>
+      </>
+    ),
+  },
+
   {
     id: "refunds",
     heading: "Refunds",
     body: (
       <>
         <P>
-          Once your return arrives, our workshop inspects the piece and verifies its
-          certification. This usually takes two to three business days. We will email you the
-          outcome either way.
+          Once a return is approved and the returned product has been received
+          and inspected, we will process the applicable refund according to the
+          outcome of the inspection.
         </P>
+
         <P>
-          Approved refunds are paid within {COMPANY.refundDays} business days of that inspection,
-          to the original payment method through {COMPANY.paymentProcessor}. We cannot refund to a
-          different card or account. Depending on your bank, the money may take a further three to
-          five business days to reflect.
+          Refunds, where applicable, are generally issued to the original
+          payment method used for the order. The time taken for the amount to
+          appear in your account may vary depending on your bank, card issuer,
+          payment provider or other financial institution.
         </P>
+
         <P>
-          We refund the price you paid for the item. Original delivery charges are refunded only
-          where the return is due to a fault on our side, an incorrect item, or a cancellation
-          within the cooling-off period.
+          If a refund is approved because the product was damaged, defective or
+          incorrectly supplied by us, the applicable return or replacement
+          arrangements will be communicated by our team.
         </P>
       </>
     ),
   },
+
   {
-    id: "exchanges",
-    heading: "Exchanges and resizing",
+    id: "shipping-charges",
+    heading: "Return & Shipping Charges",
     body: (
       <>
         <P>
-          Prefer a different piece? Tell us in your return email and we will hold the replacement
-          for you. If the new piece costs more, we will send a secure payment link for the
-          difference; if it costs less, we refund the balance.
+          The responsibility for return shipping depends on the reason for the
+          return and the outcome of our assessment.
         </P>
+
         <P>
-          Most rings can be resized after purchase. Your first resize within 30 days of delivery is
-          free of charge; after that, or for a second resize, a workshop fee applies and we will
-          quote you before starting. Some settings — full eternity bands, tension settings and
-          certain gemstone designs — cannot safely be resized, and we will tell you upfront if
-          that is the case.
+          Where the issue is confirmed to be a manufacturing defect, transit
+          damage or an incorrect product supplied by Artics Decorr, we will
+          communicate the applicable collection or shipping arrangement.
         </P>
+
+        <P>
+          For returns requested for reasons unrelated to a product defect or
+          error on our part, applicable transportation, collection or handling
+          charges may be deducted from the refund or may be payable by the
+          customer.
+        </P>
+      </>
+    ),
+  },
+
+  {
+    id: "cancellations",
+    heading: "Order Cancellation",
+    body: (
+      <>
+        <P>
+          If you need to cancel an order, please contact us as soon as
+          possible after placing the order.
+        </P>
+
+        <P>
+          Cancellation requests received before processing or dispatch may be
+          accommodated depending on the status of the order.
+        </P>
+
+        <P>
+          Once an order has entered production, customisation, packing or
+          dispatch, cancellation may not be possible. For customised or
+          made-to-order products, cancellation conditions may vary depending on
+          the stage of production.
+        </P>
+
         <Note>
-          Once a ring has been resized it is considered altered and can no longer be returned for
-          a change of mind. If you are unsure of your size, ask us for a ring sizer before you
-          order.
+          Please contact our team immediately if you need to cancel an order so
+          we can check its current processing status.
         </Note>
       </>
     ),
   },
+
   {
-    id: "faulty",
-    heading: "Faulty or incorrect items",
+    id: "inspection",
+    heading: "Inspection & Resolution",
     body: (
       <>
         <P>
-          Under section 56 of the CPA, if a piece is defective, unsafe or not of the quality you
-          are reasonably entitled to expect, you may return it within six months of delivery. You
-          choose whether we repair it, replace it, or refund you in full — and we cover the cost
-          of collection.
+          For certain return or damage claims, Artics Decorr may inspect the
+          product before approving a replacement or refund.
         </P>
+
         <P>
-          This covers genuine manufacturing faults such as a stone that comes loose from a sound
-          setting, a clasp that fails in normal use, or a soldered joint that separates. It does
-          not cover damage from accidents, knocks, chemical exposure, sport, or wear and tear over
-          time, and it does not cover work done by another jeweller.
+          The inspection helps us determine whether the issue is related to
+          manufacturing, transportation, product selection, installation,
+          handling or normal use.
         </P>
+
         <P>
-          If we send you the wrong item, tell us within {COMPANY.transitClaimHours} hours of
-          delivery and we will arrange collection and dispatch the correct piece at our cost.
+          Depending on the circumstances, the resolution may include repair,
+          replacement, replacement of a damaged component, store credit or
+          refund, as applicable.
         </P>
       </>
     ),
   },
+
   {
-    id: "damaged-in-transit",
-    heading: "Parcels damaged in transit",
+    id: "care",
+    heading: "Product Care & Usage",
     body: (
       <>
         <P>
-          Check your parcel in front of the courier where possible. If the outer packaging is
-          torn, opened or tampered with, note it on the delivery slip before signing.
+          Our outdoor furniture is designed for outdoor environments, but
+          appropriate care and maintenance are important for preserving its
+          appearance and performance.
         </P>
+
         <P>
-          Report any transit damage or a missing item to us within {COMPANY.transitClaimHours}{" "}
-          hours of delivery, with photographs of the packaging and the piece. Claims outside this
-          window are difficult for us to lodge with the courier and may not be covered.
+          Damage resulting from misuse, accidents, improper cleaning,
+          unauthorised alterations, incorrect installation, neglect or use
+          outside the intended purpose may not be covered under a return,
+          replacement or defect claim.
+        </P>
+
+        <P>
+          We recommend following the care and maintenance instructions supplied
+          with your product and using the product in accordance with its
+          intended application.
         </P>
       </>
     ),
   },
-  {
-    id: "cancellations",
-    heading: "Cancelling before dispatch",
-    body: (
-      <P>
-        You can cancel a standard order at no charge any time before it is dispatched — just email
-        us as soon as possible. Bespoke and made-to-order pieces can be cancelled without charge
-        within 24 hours of ordering; after that, work has usually begun and we may retain a
-        reasonable deposit to cover materials and labour already committed, as permitted under
-        section 17 of the CPA.
-      </P>
-    ),
-  },
+
   {
     id: "contact-returns",
-    heading: "Questions",
+    heading: "Questions About Returns & Refunds",
     body: (
-      <P>
-        Email{" "}
-        <a href={`mailto:${COMPANY.email}`} className="text-[#BF9A3A] hover:underline">
-          {COMPANY.email}
-        </a>{" "}
-        or call{" "}
-        <a href={`tel:${COMPANY.phoneHref}`} className="text-[#BF9A3A] hover:underline">
-          {COMPANY.phone}
-        </a>
-        . You can also read our{" "}
-        <Link href="/terms" className="text-[#BF9A3A] hover:underline">
-          Terms &amp; Conditions
-        </Link>{" "}
-        or the{" "}
-        <Link href="/faq" className="text-[#BF9A3A] hover:underline">
-          FAQ
-        </Link>
-        .
-      </P>
+      <>
+        <P>
+          If you have any questions regarding a return, replacement,
+          cancellation or refund, please contact the Artics Decorr team.
+        </P>
+
+        <P>
+          Email{" "}
+          <a
+            href={`mailto:${COMPANY.email}`}
+            className="text-[#BF9A3A] hover:underline"
+          >
+            {COMPANY.email}
+          </a>{" "}
+          or call{" "}
+          <a
+            href={`tel:${COMPANY.phoneHref}`}
+            className="text-[#BF9A3A] hover:underline"
+          >
+            {COMPANY.phone}
+          </a>
+          .
+        </P>
+
+        <P>
+          You can also review our{" "}
+          <Link
+            href="/terms"
+            className="text-[#BF9A3A] hover:underline"
+          >
+            Terms &amp; Conditions
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy"
+            className="text-[#BF9A3A] hover:underline"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </P>
+      </>
     ),
   },
 ];
@@ -265,9 +433,9 @@ const SECTIONS = [
 export default function RefundReturnsPage() {
   return (
     <LegalPage
-      title="Refund & Return Policy"
-      breadcrumb="Refund & Returns"
-      subtitle="Returns, exchanges, resizing and refunds — plus the rights South African law gives you when you buy online."
+      title="Return & Refund Policy"
+      breadcrumb="Return & Refund"
+      subtitle="Everything you need to know about returns, replacements, cancellations and refunds for Artics Decorr outdoor furniture and decor."
       sections={SECTIONS}
     />
   );

@@ -4,15 +4,39 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
 
+/* Match the toast library used in layout.js — see ProductForm for the note */
+import { toast } from "sonner";
+
+const iconProps = {
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.6,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  "aria-hidden": true,
+};
+
+const HeartIcon = ({ filled, ...p }) => (
+  <svg {...iconProps} fill={filled ? "currentColor" : "none"} {...p}>
+    <path d="M12 20s-7-4.4-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.7C19 15.6 12 20 12 20z" />
+  </svg>
+);
+
 export default function AddToCartBox({ product, initialWishlisted = false }) {
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
+
   const [qty, setQty] = useState(1);
   const [wishlisted, setWishlisted] = useState(initialWishlisted);
   const [pending, setPending] = useState(false);
-  const [added, setAdded] = useState(false);
+
+  const inStock = product.stock > 0;
+  const max = Math.max(1, product.stock || 1);
 
   function handleAddToCart() {
+    if (!inStock) return;
+
     addItem(
       {
         productId: product._id,
@@ -23,56 +47,96 @@ export default function AddToCartBox({ product, initialWishlisted = false }) {
       },
       qty
     );
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+
+    toast.success(`${product.name} added to cart`);
   }
 
   async function toggleWishlist() {
     if (pending) return;
     setPending(true);
+
     try {
       const res = await fetch("/api/wishlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId: product._id }),
       });
+
       if (res.status === 401) {
         router.push("/account/login?next=/wishlist");
         return;
       }
+
+      if (!res.ok) {
+        toast.error("Could not update your wishlist.");
+        return;
+      }
+
       const data = await res.json();
       setWishlisted(data.inWishlist);
+      toast.success(data.inWishlist ? "Saved to wishlist" : "Removed from wishlist");
+    } catch {
+      toast.error("Could not reach the server. Check your connection.");
     } finally {
       setPending(false);
     }
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center border border-border rounded">
+    <div className="space-y-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        {/* quantity */}
+        <div className="flex h-[54px] shrink-0 items-center rounded-[4px] border border-[#132c47]/15 bg-white">
           <button
-            className="w-9 h-9 flex items-center justify-center"
+            type="button"
             onClick={() => setQty((q) => Math.max(1, q - 1))}
+            disabled={qty <= 1}
+            aria-label="Decrease quantity"
+            className="grid h-full w-12 place-items-center text-[18px] text-[#66717c] transition-colors hover:text-[#770800] disabled:opacity-30"
           >
-            −
+            &minus;
           </button>
-          <span className="w-10 text-center">{qty}</span>
-          <button className="w-9 h-9 flex items-center justify-center" onClick={() => setQty((q) => q + 1)}>
+          <span
+            aria-live="polite"
+            className="w-10 text-center text-[15px] font-medium tabular-nums text-[#132c47]"
+          >
+            {qty}
+          </span>
+          <button
+            type="button"
+            onClick={() => setQty((q) => Math.min(max, q + 1))}
+            disabled={qty >= max}
+            aria-label="Increase quantity"
+            className="grid h-full w-12 place-items-center text-[18px] text-[#66717c] transition-colors hover:text-[#770800] disabled:opacity-30"
+          >
             +
           </button>
         </div>
 
-        <button onClick={handleAddToCart} className="btn-gold px-6 py-2 rounded text-sm flex-1">
-          {added ? "Added to cart" : "Add to cart"}
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          disabled={!inStock}
+          className="h-[54px] flex-1 rounded-[4px] bg-[#132c47] px-8 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#770800] disabled:cursor-not-allowed disabled:bg-[#132c47]/35"
+        >
+          {inStock ? "Add to cart" : "Out of stock"}
         </button>
       </div>
 
-      <div className="flex gap-3 text-sm">
-        <button onClick={toggleWishlist} className="btn-outline-gold px-4 py-2 rounded flex-1">
-          {wishlisted ? "♥ In Wishlist" : "♡ Add to Wishlist"}
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={toggleWishlist}
+        disabled={pending}
+        aria-pressed={wishlisted}
+        className={`flex h-[52px] w-full items-center justify-center gap-2.5 rounded-[4px] border text-[10px] font-bold uppercase tracking-[0.22em] transition-colors disabled:opacity-60 ${
+          wishlisted
+            ? "border-[#770800] text-[#770800]"
+            : "border-[#132c47]/15 text-[#66717c] hover:border-[#770800] hover:text-[#770800]"
+        }`}
+      >
+        <HeartIcon filled={wishlisted} className="h-[17px] w-[17px]" />
+        {wishlisted ? "In wishlist" : "Add to wishlist"}
+      </button>
     </div>
   );
 }

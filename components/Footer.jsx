@@ -1,195 +1,243 @@
-// components/Footer.jsx
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFacebookF,
+  faYoutube,
+  faInstagram,
+} from "@fortawesome/free-brands-svg-icons";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
 
-const LOGO_SRC = "/logo.png";
-const GOLD = "#DBAF36";
+config.autoAddCss = false;
 
-const BRAND_TEXT =
-  "Since 2006, Lute Diamonds (Pty) Ltd has crafted exclusively styled diamonds, combining fine workmanship with timeless elegance to satisfy discerning local and international clients.";
-
-const SHOP_LINKS = [
-  { href: "/product-category/wedding-rings", label: "Wedding Rings" },
-  { href: "/product-category/pendants", label: "Pendants" },
-  { href: "/product-category/earrings", label: "Earrings" },
-];
-
-const CATEGORY_LINKS = [
-  { href: "/shop", label: "Jewellery" },
-  { href: "/shop", label: "Polished Precious Stones" },
-  { href: "/shop", label: "Semi-Precious Polished Stones" },
-];
-
-const INFO_LINKS = [
-  { href: "/delivery-returns", label: "Delivery & Returns" },
-  { href: "/terms", label: "Terms & Conditions" },
-  { href: "/privacy", label: "Privacy Policy" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/contact", label: "Contact Us" },
-];
+const ABOUT =
+  "ARTICS DECORR brings to you the topmost niche quality and unmatched styles for your outdoors. It has provided its customers profound satisfaction and comfort when it comes to outdoor wicker furniture.";
 
 const SOCIALS = [
   {
+    icon: faFacebookF,
     label: "Facebook",
-    href: "https://www.facebook.com/people/Lute-Diamonds/61592089116019/",
-    path: "M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5h1.65V3.6c-.29-.04-1.27-.12-2.41-.12-2.38 0-4.01 1.45-4.01 4.13v2.29H7.5V13h2.78v8z",
+    href: "https://www.facebook.com/people/Artics-Decor/100086429426276/",
   },
   {
+    icon: faYoutube,
+    label: "YouTube",
+    href: "https://www.youtube.com/@articsdecor",
+  },
+  {
+    icon: faInstagram,
     label: "Instagram",
-    href: "https://www.instagram.com/lutediamonds/",
-    path: "M12 7.6a4.4 4.4 0 1 0 0 8.8 4.4 4.4 0 0 0 0-8.8m0 1.8a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2M16.9 6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2M8.4 3h7.2A5.4 5.4 0 0 1 21 8.4v7.2a5.4 5.4 0 0 1-5.4 5.4H8.4A5.4 5.4 0 0 1 3 15.6V8.4A5.4 5.4 0 0 1 8.4 3m0 1.9A3.5 3.5 0 0 0 4.9 8.4v7.2a3.5 3.5 0 0 0 3.5 3.5h7.2a3.5 3.5 0 0 0 3.5-3.5V8.4a3.5 3.5 0 0 0-3.5-3.5z",
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/company/lutediamonds/",
-    path: "M6.94 8.5H4.1V20h2.84zM5.52 3.9a1.65 1.65 0 1 0 0 3.3 1.65 1.65 0 0 0 0-3.3M20 13.6c0-3.05-1.63-4.47-3.8-4.47-1.75 0-2.54.96-2.98 1.64V8.5h-2.84c.04.8 0 11.5 0 11.5h2.84v-6.42c0-.26.02-.51.09-.69.2-.51.67-1.04 1.45-1.04 1.03 0 1.44.78 1.44 1.92V20H20z",
+    href: "https://www.instagram.com/articsdecor8/",
   },
 ];
 
-function ColumnHeading({ children }) {
-  return (
-    <div className="mb-6">
-      <h4 className="text-[13px] font-semibold uppercase tracking-[0.16em] text-white">{children}</h4>
-      <span className="mt-3 block h-px w-8" style={{ backgroundColor: GOLD }} />
-    </div>
-  );
-}
+const QUICK_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about-us" },
+  { label: "Products", href: "/products" },
+  { label: "Shop", href: "/shop" },
+  { label: "Materials", href: "/materials" },
+  { label: "Contact", href: "/contact" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Return & Refund", href: "/delivery-returns" },
+];
 
-function FooterLink({ href, children }) {
+const HEADING = "text-[21px] font-bold leading-tight text-white";
+
+const LINK =
+  "leading-[1.3] text-white transition-colors duration-200 hover:text-[#E0A63F]";
+
+function LinkList({ items }) {
   return (
-    <Link
-      href={href}
-      className="group inline-flex items-center gap-0 text-[14.5px] text-white/60 transition-colors hover:text-[#DBAF36]"
-    >
-      <span className="h-px w-0 bg-[#DBAF36] transition-all duration-300 ease-out group-hover:mr-2 group-hover:w-3" />
-      {children}
-    </Link>
+    <ul className="space-y-3">
+      {items.map((item) => (
+        <li key={item.href}>
+          <Link href={item.href} className={LINK}>
+            {item.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }
 
 export default function Footer() {
-  const year = new Date().getFullYear();
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/categories", {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+
+        const data = await res.json();
+
+        if (!cancelled) {
+          setCategories(Array.isArray(data?.items) ? data.items : []);
+        }
+      } catch (error) {
+        console.error("FOOTER CATEGORY MENU ERROR:", error);
+
+        if (!cancelled) {
+          setCategories([]);
+        }
+      }
+    };
+
+    fetchCategories();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /*
+   * Categories database se aa rahi hain.
+   * Har category ka name + slug automatically use hoga.
+   */
+  const dynamicCategories = categories.map((category) => ({
+    label: category.name,
+    href: `/product-category/${category.slug}`,
+  }));
+
+  /*
+   * Footer mein 2 columns maintain karne ke liye
+   * categories ko half-half divide kar rahe hain.
+   */
+  const middle = Math.ceil(dynamicCategories.length / 2);
+
+  const categoriesA = dynamicCategories.slice(0, middle);
+  const categoriesB = dynamicCategories.slice(middle);
 
   return (
-    <footer className="relative overflow-hidden bg-[#0E0D0B] text-white">
-      {/* top hairline + soft gold glow */}
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-[#DBAF36]/60 to-transparent" />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/4 h-[420px] w-[420px] rounded-full blur-[130px]"
-        style={{ background: "radial-gradient(circle, rgba(219,175,54,0.16), transparent 70%)" }}
-      />
+    <footer className="w-full bg-black text-white">
+      <div className="grid grid-cols-1 lg:grid-cols-[33%_1fr]">
+        {/* ==================== LEFT — image panel ==================== */}
+        <div className="relative overflow-hidden px-8 py-14 sm:px-12 lg:px-14 lg:py-14">
+          <Image
+            src="/home/footer.png"
+            alt=""
+            fill
+            sizes="(max-width: 1024px) 100vw, 33vw"
+            className="object-cover"
+          />
 
-      <div className="relative mx-auto w-full max-w-[1500px] px-[30px] py-16 md:py-20">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.7fr_1fr_1.35fr_1fr_1.3fr] lg:gap-10">
-          {/* brand */}
-          <div className="max-w-[360px]">
-            <Link href="/" aria-label="Lute Diamonds home" className="inline-block">
-              <img src={LOGO_SRC} alt="Lute Diamonds" className="h-11 w-auto" />
-            </Link>
+          <div className="absolute inset-0 bg-black/70" />
 
-            <p className="mt-6 text-[14.5px] leading-[1.8] text-white/55">{BRAND_TEXT}</p>
+          <div className="relative z-10">
+            <h2 className="text-[26px] font-bold tracking-[0.5px] text-white">
+              ARTICS DECORR
+            </h2>
 
-            <div className="mt-8 flex items-center gap-3">
-              {SOCIALS.map((s) => (
+            <p className="mt-6 max-w-[510px] text-[17px] leading-[1.5] text-white">
+              {ABOUT}
+            </p>
+
+            <div className="mt-10 flex gap-3.5">
+              {SOCIALS.map(({ icon, label, href }) => (
                 <a
-                  key={s.label}
-                  href={s.href}
+                  key={label}
+                  href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={s.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/70 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#DBAF36] hover:bg-[#DBAF36] hover:text-[#0E0D0B]"
+                  aria-label={label}
+                  className="grid h-10 w-10 place-items-center rounded-full border-2 border-white text-[18px] text-white transition-colors duration-300 hover:border-[#E0A63F] hover:text-[#E0A63F]"
                 >
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]" aria-hidden="true">
-                    <path d={s.path} />
-                  </svg>
+                  <FontAwesomeIcon icon={icon} />
                 </a>
               ))}
             </div>
           </div>
+        </div>
 
-          {/* shop */}
-          <div>
-            <ColumnHeading>Shop Now</ColumnHeading>
-            <ul className="space-y-3.5">
-              {SHOP_LINKS.map((l) => (
-                <li key={l.href}>
-                  <FooterLink href={l.href}>{l.label}</FooterLink>
-                </li>
-              ))}
-            </ul>
-          </div>
+        {/* ==================== RIGHT — links panel ==================== */}
+        <div className="flex flex-col px-8 py-14 sm:px-12 lg:px-14 lg:pb-12 lg:pt-[70px]">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 xl:grid-cols-[0.9fr_0.9fr_1.2fr_1fr]">
+            {/* Quick Link */}
+            <div>
+              <h3 className={HEADING}>Quick Link</h3>
 
-          {/* categories */}
-          <div>
-            <ColumnHeading>Categories</ColumnHeading>
-            <ul className="space-y-3.5">
-              {CATEGORY_LINKS.map((l) => (
-                <li key={l.href}>
-                  <FooterLink href={l.href}>{l.label}</FooterLink>
-                </li>
-              ))}
-            </ul>
-          </div>
+              <div className="mt-7">
+                <LinkList items={QUICK_LINKS} />
+              </div>
+            </div>
 
-          {/* information */}
-          <div>
-            <ColumnHeading>Information</ColumnHeading>
-            <ul className="space-y-3.5">
-              {INFO_LINKS.map((l) => (
-                <li key={l.href}>
-                  <FooterLink href={l.href}>{l.label}</FooterLink>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* Top Categories — column 1 */}
+            <div>
+              <h3 className={HEADING}>Top Categories</h3>
 
-          {/* need help */}
-          <div>
-            <ColumnHeading>Need Help?</ColumnHeading>
+              <div className="mt-7">
+                {categoriesA.length > 0 ? (
+                  <LinkList items={categoriesA} />
+                ) : (
+                  <p className="text-sm text-white/60">
+                    No categories available.
+                  </p>
+                )}
+              </div>
+            </div>
 
-            <p className="text-[14.5px] leading-[1.8] text-white/55">
-              <span className="mb-1 block text-[12px] font-semibold uppercase tracking-[0.12em] text-[#DBAF36]">
-                Head Office
-              </span>
-              25 Villiers Street, Kimberley
-              <br />
-              8301, South Africa
-            </p>
+            {/* Top Categories — column 2 */}
+            <div className="xl:pt-[52px]">
+              {categoriesB.length > 0 && <LinkList items={categoriesB} />}
+            </div>
 
-            <div className="mt-6 space-y-2">
-              <a
-                href="tel:+27722529457"
-                className="block text-[14.5px] text-white/70 transition-colors hover:text-[#DBAF36]"
-              >
-                +27 72 252 9457
-              </a>
-              <a
-                href="mailto:luteig@gmail.com"
-                className="block text-[14.5px] text-white/70 transition-colors hover:text-[#DBAF36]"
-              >
-                luteig@gmail.com
-              </a>
+            {/* Locations */}
+            <div>
+              <h3 className={HEADING}>Locations</h3>
+
+              <address className="mt-7 max-w-[290px] text-[17px] not-italic leading-[1.5] text-white">
+                A4/3/15, South Side, G.T. Road, Industrial Area, Vijay Nagar,
+                Ghaziabad &ndash; 201009, Uttar Pradesh, India
+              </address>
+
+              <div className="mt-8 space-y-3">
+                <p className="text-[16px] leading-[1.3] text-white">
+                  <span className="font-bold">Phone:</span>{" "}
+                  <a
+                    href="tel:+918860166301"
+                    className="transition-colors hover:text-[#E0A63F]"
+                  >
+                    +91 8860166301
+                  </a>
+                </p>
+
+                <p className="text-[16px] leading-[1.3] text-white">
+                  <span className="font-bold">Email:</span>{" "}
+                  <a
+                    href="mailto:articsdecor@gmail.com"
+                    className="text-[15px] text-[#E0A63F] transition-opacity hover:opacity-80"
+                  >
+                    articsdecor@gmail.com
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* bottom bar */}
-      <div className="relative border-t border-white/10">
-        <div className="mx-auto flex w-full max-w-[1500px] flex-col items-center justify-between gap-2 px-[30px] py-6 text-[13.5px] text-white/45 md:flex-row">
-          <p>
-            &copy; {year} <span className="text-[#DBAF36]">Lute Diamonds</span> (Pty) Ltd. All rights reserved.
-          </p>
-          <p>
+          {/* ==================== COPYRIGHT ==================== */}
+          <p className="mt-auto pt-14 text-[17px] text-white lg:text-right">
+            Copyright &copy; {new Date().getFullYear()} ARTICS D&Egrave;COR |
             Powered by{" "}
-            <a
-              href="https://cybertricksmedia.com"
+            <Link
+              href="https://www.cybertricksmedia.com/"
+              className="text-[#E0A63F]"
               target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#DBAF36] transition-opacity hover:opacity-80"
             >
               Cybertricksmedia Pvt Ltd
-            </a>
+            </Link>
           </p>
         </div>
       </div>

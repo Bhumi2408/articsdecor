@@ -15,7 +15,6 @@ export default async function EditProductPage({ params }) {
 
   return (
     <div>
-      <h1 className="font-serif text-3xl mb-8">Edit Product</h1>
       <ProductForm
         categories={JSON.parse(JSON.stringify(categories))}
         initialProduct={JSON.parse(JSON.stringify(product))}

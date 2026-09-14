@@ -4,9 +4,17 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
-/* 👇 apni image ka path change kar lena */
-const SIDE_IMAGE = "/home/hero2.jpeg";
+/* =========================================================
+   THEME
+   =========================================================
+   Primary Navy  : #132c47
+   Accent Maroon : #244128
+   Background     : #f5f3ee
+========================================================= */
+
+const SIDE_IMAGE = "/products/p32.png";
 const LOGO_SRC = "/logo.png";
 
 const EyeIcon = ({ open, className = "" }) => (
@@ -40,23 +48,36 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/account";
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
+
     setSubmitting(true);
     setError("");
+
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(form),
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Login failed");
+
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
       router.push(next);
       router.refresh();
     } catch (err) {
@@ -66,135 +87,558 @@ function LoginForm() {
     }
   }
 
-  const inputClass =
-    "w-full rounded-lg border border-black/10 bg-white px-4 py-3.5 text-[15px] text-[#141414] outline-none transition-all placeholder:text-[#A5A5A5] focus:border-[#BF9A3A] focus:ring-2 focus:ring-[#BF9A3A]/20";
+  const inputClass = `
+    w-full
+    rounded-xl
+    border
+    border-[#132c47]/15
+    bg-white
+    px-4
+    py-3.5
+    text-[15px]
+    text-[#132c47]
+    outline-none
+    placeholder:text-[#9a9a9a]
+    transition-all
+    duration-300
+    focus:border-[#132c47]
+    focus:ring-4
+    focus:ring-[#132c47]/10
+  `;
+
+  const labelClass = `
+    mb-2.5
+    block
+    text-[11.5px]
+    font-bold
+    uppercase
+    tracking-[0.14em]
+    text-[#132c47]
+  `;
 
   return (
-    <div className="grid min-h-[70vh] lg:min-h-[calc(100vh-120px)] lg:grid-cols-2">
-      {/* ---------- left visual (desktop only) ---------- */}
-      <div className="relative hidden overflow-hidden lg:block">
-        <img src={SIDE_IMAGE} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/20" />
-        <div className="relative flex h-full flex-col justify-end p-12 xl:p-16">
-          <span className="text-[11.5px] font-semibold uppercase tracking-[0.16em] text-[#DBAF36]">
-            Lute Diamonds
-          </span>
-          <h2 className="mt-4 max-w-[420px] text-[34px] font-medium leading-[1.15] text-white xl:text-[42px]">
-            Welcome back to timeless brilliance
-          </h2>
-          <p className="mt-4 max-w-[420px] text-[15px] leading-[1.7] text-white/70">
-            Sign in to track your orders, save your favourite pieces and check out faster.
-          </p>
-        </div>
-      </div>
+    <main className="min-h-screen bg-[#f5f3ee]">
+       <Breadcrumbs image="/products/p10.png" title="Login" items={[{ label: "Login" }]} />
+      <div
+        className="
+          grid
+          min-h-screen
+          lg:grid-cols-2
+        "
+      >
+        {/* =====================================================
+            LEFT VISUAL
+        ====================================================== */}
+        <div className="relative hidden overflow-hidden lg:block">
+          <img
+            src={SIDE_IMAGE}
+            alt=""
+            className="
+              absolute
+              inset-0
+              h-full
+              w-full
+              object-cover
+              transition-transform
+              duration-[1200ms]
+              hover:scale-[1.02]
+            "
+          />
 
-      {/* ---------- form ---------- */}
-      <div className="flex items-center justify-center px-5 py-14 sm:px-10 lg:py-20">
-        <div className="w-full max-w-[420px]">
-          <Link href="/" className="mb-10 inline-block lg:hidden">
-            <img src={LOGO_SRC} alt="Lute Diamonds" className="h-10 w-auto" />
-          </Link>
+          {/* NAVY BASE OVERLAY */}
+          <div
+            className="
+              absolute
+              inset-0
+              bg-[#132c47]/40
+            "
+          />
 
-          <h1 className="text-[28px] font-medium leading-tight tracking-[-0.01em] text-[#141414] sm:text-[32px]">
-            Sign In
-          </h1>
-          <p className="mt-2 text-[15px] text-[#6B6B6B]">
-            Enter your details to access your account.
-          </p>
+          {/* MAROON GRADIENT */}
+          <div
+            className="
+              absolute
+              inset-0
+              bg-gradient-to-br
+              from-[#132c47]/20
+              via-[#132c47]/35
+              to-[#244128]/55
+            "
+          />
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-            <div>
-              <label htmlFor="email" className="mb-2 block text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[#6B6B6B]">
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                autoComplete="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className={inputClass}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="mb-2 block text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[#6B6B6B]">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className={`${inputClass} pr-12`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-[#8A8A8A] transition-colors hover:text-[#BF9A3A]"
-                >
-                  <EyeIcon open={showPassword} className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-
-            {error && (
+          {/* CONTENT */}
+          <div
+            className="
+              relative
+              flex
+              min-h-screen
+              flex-col
+              justify-end
+              p-12
+              xl:p-16
+              2xl:p-20
+            "
+          >
+            {/* BRAND */}
+            <div className="mb-10">
               <div
-                role="alert"
-                className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-700"
+                className="
+                  mb-4
+                  h-px
+                  w-16
+                  bg-[#f5f3ee]/70
+                "
+              />
+
+              <span
+                className="
+                  text-[11px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.28em]
+                  text-[#f5f3ee]
+                "
               >
-                {error}
-              </div>
-            )}
+                Artics Decorr
+              </span>
+            </div>
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#BF9A3A] py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#A8862C] disabled:cursor-not-allowed disabled:opacity-60"
+            <h2
+              className="
+                max-w-[560px]
+                font-serif
+                text-[42px]
+                font-medium
+                leading-[1.05]
+                tracking-[-0.8px]
+                text-white
+                xl:text-[52px]
+                2xl:text-[58px]
+              "
             >
-              {submitting && (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-              )}
-              {submitting ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
+              Welcome back to
+              <br />
+              timeless comfort.
+            </h2>
 
-          <div className="mt-8 flex items-center gap-4">
-            <span className="h-px flex-1 bg-black/10" />
-            <span className="text-[12px] uppercase tracking-[0.1em] text-[#9A9A9A]">or</span>
-            <span className="h-px flex-1 bg-black/10" />
+            <p
+              className="
+                mt-6
+                max-w-[500px]
+                text-[15px]
+                leading-[1.8]
+                text-white/75
+                xl:text-[16px]
+              "
+            >
+              Sign in to manage your account, track your orders and
+              continue exploring our thoughtfully designed outdoor
+              furniture collection.
+            </p>
+
+            {/* DECORATIVE LINE */}
+            <div className="mt-9 flex items-center gap-3">
+              <span className="h-px w-12 bg-[#f5f3ee]/50" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#f5f3ee]" />
+              <span className="h-px w-12 bg-[#f5f3ee]/50" />
+            </div>
           </div>
+        </div>
 
-          <p className="mt-6 text-center text-[15px] text-[#6B6B6B]">
-            No account yet?{" "}
-            <Link
-              href={`/account/register${next !== "/account" ? `?next=${encodeURIComponent(next)}` : ""}`}
-              className="font-medium text-[#BF9A3A] underline decoration-1 underline-offset-4 hover:text-[#A8862C]"
+        {/* =====================================================
+            RIGHT FORM
+        ====================================================== */}
+        <div
+          className="
+            flex
+            items-center
+            justify-center
+            px-5
+            py-12
+            sm:px-10
+            sm:py-16
+            lg:px-12
+            xl:px-20
+            2xl:px-28
+          "
+        >
+          <div className="w-full max-w-[470px]">
+
+            {/* MOBILE LOGO */}
+            <div className="mb-10 lg:hidden">
+              <Link href="/" className="inline-flex items-center">
+                <img
+                  src={LOGO_SRC}
+                  alt="Artics Decorr"
+                  className="h-11 w-auto object-contain"
+                />
+              </Link>
+
+              <div className="mt-5 h-px w-14 bg-[#244128]" />
+            </div>
+
+            {/* FORM CARD */}
+            <div
+              className="
+                rounded-2xl
+                border
+                border-[#132c47]/10
+                bg-white
+                p-6
+                shadow-[0_25px_70px_-35px_rgba(19,44,71,0.45)]
+                sm:p-9
+                lg:p-10
+                xl:p-12
+              "
             >
-              Create one
-            </Link>
-          </p>
+              {/* TOP LABEL */}
+              <div className="mb-8">
+                <span
+                  className="
+                    inline-flex
+                    items-center
+                    gap-2
+                    text-[11px]
+                    font-bold
+                    uppercase
+                    tracking-[0.2em]
+                    text-[#244128]
+                  "
+                >
+                  <span className="h-px w-7 bg-[#244128]" />
+                  My Account
+                </span>
+
+                <h1
+                  className="
+                    mt-4
+                    font-serif
+                    text-[34px]
+                    font-medium
+                    leading-tight
+                    tracking-[-0.5px]
+                    text-[#132c47]
+                    sm:text-[38px]
+                  "
+                >
+                  Sign In
+                </h1>
+
+                <p
+                  className="
+                    mt-3
+                    text-[14.5px]
+                    leading-7
+                    text-[#66717b]
+                  "
+                >
+                  Enter your details to access your account and
+                  continue shopping with us.
+                </p>
+              </div>
+
+              {/* FORM */}
+              <form onSubmit={handleSubmit} className="space-y-5">
+
+                {/* EMAIL */}
+                <div>
+                  <label htmlFor="email" className={labelClass}>
+                    Email Address
+                  </label>
+
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        email: e.target.value,
+                      })
+                    }
+                    className={inputClass}
+                  />
+                </div>
+
+                {/* PASSWORD */}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className={labelClass}>
+                      Password
+                    </label>
+
+                    <span
+                      className="
+                        mb-2.5
+                        text-[10px]
+                        font-medium
+                        uppercase
+                        tracking-[0.1em]
+                        text-[#9a9a9a]
+                      "
+                    >
+                      Secure Login
+                    </span>
+                  </div>
+
+                  <div className="relative">
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      autoComplete="current-password"
+                      placeholder="••••••••"
+                      value={form.password}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          password: e.target.value,
+                        })
+                      }
+                      className={`${inputClass} pr-12`}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword((v) => !v)
+                      }
+                      aria-label={
+                        showPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
+                      className="
+                        absolute
+                        right-3
+                        top-1/2
+                        -translate-y-1/2
+                        rounded-lg
+                        p-2
+                        text-[#132c47]/50
+                        transition-all
+                        duration-300
+                        hover:bg-[#f5f3ee]
+                        hover:text-[#244128]
+                      "
+                    >
+                      <EyeIcon
+                        open={showPassword}
+                        className="h-5 w-5"
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                {/* ERROR */}
+                {error && (
+                  <div
+                    role="alert"
+                    className="
+                      rounded-xl
+                      border
+                      border-[#244128]/20
+                      bg-[#244128]/5
+                      px-4
+                      py-3
+                      text-[13.5px]
+                      leading-relaxed
+                      text-[#244128]
+                    "
+                  >
+                    {error}
+                  </div>
+                )}
+
+                {/* LOGIN BUTTON */}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="
+                    group
+                    relative
+                    flex
+                    w-full
+                    items-center
+                    justify-center
+                    gap-2
+                    overflow-hidden
+                    rounded-xl
+                    bg-[#132c47]
+                    py-4
+                    text-[13px]
+                    font-bold
+                    uppercase
+                    tracking-[0.14em]
+                    text-white
+                    transition-all
+                    duration-500
+                    hover:bg-[#244128]
+                    hover:shadow-[0_12px_30px_-12px_rgba(119,8,0,0.5)]
+                    disabled:cursor-not-allowed
+                    disabled:opacity-60
+                  "
+                >
+                  <span
+                    className="
+                      absolute
+                      inset-0
+                      -translate-x-full
+                      bg-white/10
+                      transition-transform
+                      duration-500
+                      group-hover:translate-x-full
+                    "
+                  />
+
+                  {submitting && (
+                    <span
+                      className="
+                        relative
+                        h-4
+                        w-4
+                        animate-spin
+                        rounded-full
+                        border-2
+                        border-white/40
+                        border-t-white
+                      "
+                    />
+                  )}
+
+                  <span className="relative">
+                    {submitting
+                      ? "Signing in..."
+                      : "Sign In"}
+                  </span>
+
+                  {!submitting && (
+                    <span
+                      className="
+                        relative
+                        ml-1
+                        text-lg
+                        leading-none
+                        transition-transform
+                        duration-300
+                        group-hover:translate-x-1
+                      "
+                    >
+                      →
+                    </span>
+                  )}
+                </button>
+              </form>
+
+              {/* DIVIDER */}
+              <div className="my-8 flex items-center gap-4">
+                <span className="h-px flex-1 bg-[#132c47]/10" />
+
+                <span
+                  className="
+                    text-[10px]
+                    font-semibold
+                    uppercase
+                    tracking-[0.18em]
+                    text-[#9a9a9a]
+                  "
+                >
+                  or
+                </span>
+
+                <span className="h-px flex-1 bg-[#132c47]/10" />
+              </div>
+
+              {/* REGISTER */}
+              <div
+                className="
+                  rounded-xl
+                  border
+                  border-[#132c47]/10
+                  bg-[#f5f3ee]
+                  px-5
+                  py-4
+                  text-center
+                "
+              >
+                <p className="text-[14px] text-[#66717b]">
+                  No account yet?
+                </p>
+
+                <Link
+                  href={`/account/register${
+                    next !== "/account"
+                      ? `?next=${encodeURIComponent(next)}`
+                      : ""
+                  }`}
+                  className="
+                    mt-1
+                    inline-flex
+                    items-center
+                    gap-1
+                    text-[14px]
+                    font-bold
+                    text-[#244128]
+                    transition-colors
+                    duration-300
+                    hover:text-[#132c47]
+                  "
+                >
+                  Create your account
+                  <span
+                    className="
+                      transition-transform
+                      duration-300
+                      group-hover:translate-x-1
+                    "
+                  >
+                    →
+                  </span>
+                </Link>
+              </div>
+            </div>
+
+            {/* BOTTOM BRAND LINE */}
+            <div className="mt-7 flex items-center justify-center gap-3">
+              <span className="h-px w-10 bg-[#132c47]/15" />
+
+              <span
+                className="
+                  text-[9px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.25em]
+                  text-[#132c47]/45
+                "
+              >
+                Artics Decorr
+              </span>
+
+              <span className="h-px w-10 bg-[#132c47]/15" />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
 function LoginSkeleton() {
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-5">
-      <div className="w-full max-w-[420px] animate-pulse space-y-5">
-        <div className="h-8 w-40 rounded bg-black/10" />
-        <div className="h-12 w-full rounded-lg bg-black/[0.07]" />
-        <div className="h-12 w-full rounded-lg bg-black/[0.07]" />
-        <div className="h-12 w-full rounded-lg bg-black/10" />
+    <div className="flex min-h-screen items-center justify-center bg-[#f5f3ee] px-5">
+      <div className="w-full max-w-[430px] animate-pulse rounded-2xl bg-white p-8 shadow-sm">
+        <div className="mb-8 h-4 w-28 rounded bg-[#132c47]/10" />
+        <div className="mb-3 h-10 w-40 rounded bg-[#132c47]/10" />
+        <div className="mb-8 h-4 w-full rounded bg-[#132c47]/5" />
+
+        <div className="space-y-5">
+          <div className="h-14 w-full rounded-xl bg-[#132c47]/5" />
+          <div className="h-14 w-full rounded-xl bg-[#132c47]/5" />
+          <div className="h-14 w-full rounded-xl bg-[#132c47]/10" />
+        </div>
       </div>
     </div>
   );
@@ -203,6 +647,7 @@ function LoginSkeleton() {
 export default function LoginPage() {
   return (
     <Suspense fallback={<LoginSkeleton />}>
+
       <LoginForm />
     </Suspense>
   );

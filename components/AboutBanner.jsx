@@ -1,27 +1,45 @@
-// components/CEOIntroSection.jsx
+import Image from "next/image";
+import Link from "next/link";
+
 export default function AboutBanner() {
   return (
-    <section className="relative w-full h-[500px] md:h-[650px]">
-      <img
-        src="/about-banner.jpeg"
-        alt="About Banner"
-        className="absolute inset-0 w-full h-full object-cover"
+    <section className="relative h-[430px] w-full overflow-hidden md:h-[500px]">
+      {/* Background Image */}
+      <Image
+        src="/products/p17.png"
+        alt="Artics Decorr outdoor furniture"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center"
       />
 
-      <div className="absolute inset-0 bg-black/50" />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/60" />
 
-      <div className="relative z-10 h-full flex flex-col justify-center text-center max-w-2xl px-6 md:px-16 text-center md:text-left mx-auto md:mx-0">
-        <h1 className="text-white text-3xl md:text-5xl font-medium leading-tight text-center">
-          Introducing the New Era of <span className="text-amber-400">Lute Diamonds</span>
-        </h1>
+      {/* Content */}
+      <div className="relative z-10 flex h-full items-center justify-center px-6 text-center">
+        <div className="max-w-3xl text-white">
 
-        <p className="text-white/90 text-sm md:text-[15px] mt-6 leading-relaxed text-center">
-          Lute Diamonds unites timeless craftsmanship with modern innovation, creating jewellery that embodies love, heritage, and elegance. Through our global platform, we connect customers worldwide with exquisite diamond pieces designed to inspire and shine across generations.
-        </p>
+          {/* Small label */}
+          <span className="mb-5 inline-block text-[11px] font-semibold uppercase tracking-[0.35em] text-white/80">
+            Discover Artics Decorr
+          </span>
 
-        <div className="mt-10 text-center">
-          <p className="text-amber-400 text-2xl md:text-4xl font-medium">Itumeleng Lute</p>
-          <p className="text-white text-sm font-semibold mt-1">-Chief Executive Officer (CEO)</p>
+          {/* Heading */}
+          <h1 className="font-[var(--font-baloo2)] text-5xl font-bold leading-tight tracking-tight md:text-6xl">
+            About Us
+          </h1>
+
+          {/* Line */}
+          <div className="mx-auto mt-6 h-[2px] w-16 bg-[var(--ad-gold)]" />
+
+          {/* Description */}
+          <p className="mx-auto mt-6 max-w-2xl text-sm leading-7 text-white/85 md:text-base">
+            Creating beautiful outdoor spaces with premium wicker furniture,
+            thoughtful design and timeless comfort.
+          </p>
+
         </div>
       </div>
     </section>

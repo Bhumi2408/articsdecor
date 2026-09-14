@@ -28,7 +28,9 @@ export async function GET(req) {
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     const limit = Math.min(48, Math.max(1, parseInt(searchParams.get("limit") || "16", 10) || 16));
 
-    const query = {};
+    const query = {
+      hiddenFromStore: { $ne: true },
+    };
     if (category) query.category = category;
     if (search) query.name = { $regex: escapeRegex(search), $options: "i" };
     if (minPrice || maxPrice) {
@@ -117,6 +119,8 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+
+    if (body.hiddenFromStore) body.featured = false;
 
     // slug pehle se hai kya — Mongo error se pehle saaf message
     const exists = await Product.findOne({ slug: body.slug }).select("_id").lean();

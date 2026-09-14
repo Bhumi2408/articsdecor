@@ -1,4 +1,3 @@
-// components/admin/ProductForm.jsx
 "use client";
 
 import { useState } from "react";
@@ -6,13 +5,22 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import MultiImageUploader from "./MultiImageUploader";
 import RichTextEditor from "./RichTextEditor";
+import SpecsEditor from "./SpecsEditor";
 import { readApiError } from "@/lib/apiError";
 
+/* ── TOAST ───────────────────────────────────────────────────────────
+   Change this one line to match the library already wired into layout.js:
+     sonner          →  import { toast } from "sonner";
+     react-hot-toast →  import toast from "react-hot-toast";
+   Both expose toast.success() / toast.error(), so nothing else changes.
+──────────────────────────────────────────────────────────────────── */
+import { toast } from "sonner";
+
 const inputClass =
-  "w-full rounded-lg border border-black/10 bg-white px-3.5 py-2.5 text-[14.5px] text-[#141414] outline-none transition-all placeholder:text-[#A5A5A5] focus:border-[#BF9A3A] focus:ring-2 focus:ring-[#BF9A3A]/20";
+  "w-full rounded-[4px] border border-[#132c47]/15 bg-white px-3.5 py-2.5 text-[14.5px] text-[#132c47] outline-none transition-all placeholder:text-[#a3aab1] focus:border-[#770800] focus:ring-2 focus:ring-[#770800]/15";
 
 const labelClass =
-  "mb-1.5 block text-[12.5px] font-semibold uppercase tracking-[0.07em] text-[#6B6B6B]";
+  "mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-[#737d86]";
 
 const slugify = (s) =>
   s
@@ -24,13 +32,15 @@ const slugify = (s) =>
 
 function Card({ title, description, children }) {
   return (
-    <section className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6">
+    <section className="rounded-[4px] border border-[#132c47]/12 bg-white p-5 sm:p-6">
       {title && (
         <div className="mb-5">
-          <h2 className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[#8A8A8A]">
+          <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#770800]">
             {title}
           </h2>
-          {description && <p className="mt-1.5 text-[13.5px] text-[#8A8A8A]">{description}</p>}
+          {description && (
+            <p className="mt-1.5 text-[13.5px] leading-relaxed text-[#737d86]">{description}</p>
+          )}
         </div>
       )}
       {children}
@@ -41,8 +51,19 @@ function Card({ title, description, children }) {
 function FieldError({ children }) {
   if (!children) return null;
   return (
-    <p data-field-error className="mt-1.5 flex items-start gap-1 text-[12.5px] font-medium text-red-600">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" className="mt-[2px] h-3.5 w-3.5 shrink-0">
+    <p
+      data-field-error
+      className="mt-1.5 flex items-start gap-1 text-[12.5px] font-medium text-[#770800]"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        aria-hidden="true"
+        className="mt-[2px] h-3.5 w-3.5 shrink-0"
+      >
         <circle cx="12" cy="12" r="9" />
         <path d="M12 8v4.5M12 16h.01" />
       </svg>
@@ -51,21 +72,33 @@ function FieldError({ children }) {
   );
 }
 
-function TextField({ label, value, onChange, type = "text", required, placeholder, hint, prefix, error }) {
+function TextField({
+  label,
+  value,
+  onChange,
+  type = "text",
+  required,
+  placeholder,
+  hint,
+  prefix,
+  error,
+}) {
   const ring = error
-    ? "border-red-400 focus:border-red-500 focus-within:border-red-500 focus:ring-red-500/20 focus-within:ring-red-500/20"
-    : "border-black/10 focus:border-[#BF9A3A] focus-within:border-[#BF9A3A] focus:ring-[#BF9A3A]/20 focus-within:ring-[#BF9A3A]/20";
+    ? "border-[#770800] focus:border-[#770800] focus-within:border-[#770800] focus:ring-[#770800]/20 focus-within:ring-[#770800]/20"
+    : "border-[#132c47]/15 focus:border-[#770800] focus-within:border-[#770800] focus:ring-[#770800]/15 focus-within:ring-[#770800]/15";
 
   return (
     <div>
       <label className={labelClass}>
         {label}
-        {required && <span className="ml-1 text-[#BF9A3A]">*</span>}
+        {required && <span className="ml-1 text-[#770800]">*</span>}
       </label>
 
       {prefix ? (
-        <div className={`flex items-stretch overflow-hidden rounded-lg border transition-all focus-within:ring-2 ${ring}`}>
-          <span className="flex shrink-0 items-center border-r border-black/10 bg-black/[0.03] px-3 text-[13.5px] text-[#8A8A8A]">
+        <div
+          className={`flex items-stretch overflow-hidden rounded-[4px] border transition-all focus-within:ring-2 ${ring}`}
+        >
+          <span className="flex shrink-0 items-center border-r border-[#132c47]/12 bg-[#f5f3ee] px-3 text-[14px] text-[#737d86]">
             {prefix}
           </span>
           <input
@@ -75,7 +108,7 @@ function TextField({ label, value, onChange, type = "text", required, placeholde
             placeholder={placeholder}
             aria-invalid={Boolean(error)}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full min-w-0 bg-white px-3.5 py-2.5 text-[14.5px] text-[#141414] outline-none placeholder:text-[#A5A5A5]"
+            className="w-full min-w-0 bg-white px-3.5 py-2.5 text-[14.5px] text-[#132c47] outline-none placeholder:text-[#a3aab1]"
           />
         </div>
       ) : (
@@ -86,14 +119,36 @@ function TextField({ label, value, onChange, type = "text", required, placeholde
           placeholder={placeholder}
           aria-invalid={Boolean(error)}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-[14.5px] text-[#141414] outline-none transition-all placeholder:text-[#A5A5A5] focus:ring-2 ${ring}`}
+          className={`w-full rounded-[4px] border bg-white px-3.5 py-2.5 text-[14.5px] text-[#132c47] outline-none transition-all placeholder:text-[#a3aab1] focus:ring-2 ${ring}`}
         />
       )}
 
       <FieldError>{error}</FieldError>
-      {!error && hint && <p className="mt-1.5 text-[12.5px] text-[#9A9A9A]">{hint}</p>}
+      {!error && hint && <p className="mt-1.5 text-[12.5px] text-[#9aa0a5]">{hint}</p>}
     </div>
   );
+}
+
+/* Old products stored specs as an object with fixed keys.
+   Convert them to rows so editing an old product doesn't blow up. */
+const LEGACY_LABELS = {
+  centerStone: "Center Stone",
+  accentStones: "Accent Stones",
+  metal: "Metal",
+  totalCarats: "Total Carats",
+  totalWeight: "Total Weight",
+  size: "Size",
+  certificate: "Certificate",
+};
+
+function toSpecRows(specs) {
+  if (Array.isArray(specs)) return specs;
+  if (specs && typeof specs === "object") {
+    return Object.entries(LEGACY_LABELS)
+      .filter(([key]) => specs[key])
+      .map(([key, label]) => ({ label, value: specs[key] }));
+  }
+  return [];
 }
 
 export default function ProductForm({ categories, initialProduct }) {
@@ -108,28 +163,21 @@ export default function ProductForm({ categories, initialProduct }) {
     category: initialProduct?.category?._id || initialProduct?.category || "",
     description: initialProduct?.description || "",
     images: initialProduct?.images || [],
+    imageAlt: initialProduct?.imageAlt || "",
     stock: initialProduct?.stock ?? 10,
     collectionTag: initialProduct?.collectionTag || "",
     featured: initialProduct?.featured || false,
+    hiddenFromStore: initialProduct?.hiddenFromStore || false,
     metaTitle: initialProduct?.metaTitle || "",
     metaDescription: initialProduct?.metaDescription || "",
     keywords: initialProduct?.keywords?.join(", ") || "",
-    specs: {
-      centerStone: initialProduct?.specs?.centerStone || "",
-      accentStones: initialProduct?.specs?.accentStones || "",
-      metal: initialProduct?.specs?.metal || "",
-      totalCarats: initialProduct?.specs?.totalCarats || "",
-      totalWeight: initialProduct?.specs?.totalWeight || "",
-      size: initialProduct?.specs?.size || "",
-      certificate: initialProduct?.specs?.certificate || "",
-    },
+    specs: toSpecRows(initialProduct?.specs),
   });
+
   const [slugTouched, setSlugTouched] = useState(isEdit);
-  const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [saving, setSaving] = useState(false);
 
-  /* edit karte hi us field ka error hata do */
   function clearFieldError(key) {
     setFieldErrors((fe) => {
       if (!fe[key]) return fe;
@@ -143,16 +191,13 @@ export default function ProductForm({ categories, initialProduct }) {
     clearFieldError(key);
     setForm((f) => ({ ...f, [key]: value }));
   }
-  function updateSpec(key, value) {
-    setForm((f) => ({ ...f, specs: { ...f.specs, [key]: value } }));
-  }
+
   function updateName(value) {
     clearFieldError("name");
     if (!slugTouched) clearFieldError("slug");
     setForm((f) => ({ ...f, name: value, slug: slugTouched ? f.slug : slugify(value) }));
   }
 
-  /* pehle error tak scroll karo */
   function scrollToFirstError() {
     setTimeout(() => {
       const el = document.querySelector("[data-field-error]");
@@ -160,7 +205,7 @@ export default function ProductForm({ categories, initialProduct }) {
     }, 50);
   }
 
-  /* server pe bhejne se pehle hi obvious cheezein pakad lo */
+  /* Catch the obvious problems before hitting the server */
   function validate() {
     const fe = {};
     if (!form.name.trim()) fe.name = "Name is required.";
@@ -172,6 +217,12 @@ export default function ProductForm({ categories, initialProduct }) {
     if (form.stock !== "" && Number(form.stock) < 0) fe.stock = "Stock cannot be negative.";
     if (!form.category) fe.category = "Pick a category.";
     if (!form.images.length) fe.images = "Add at least one image.";
+
+    const halfFilled = form.specs.some(
+      (row) => Boolean(row.label?.trim()) !== Boolean(row.value?.trim())
+    );
+    if (halfFilled) fe.specs = "Every specification row needs both a label and a value.";
+
     return fe;
   }
 
@@ -181,46 +232,51 @@ export default function ProductForm({ categories, initialProduct }) {
     const localErrors = validate();
     if (Object.keys(localErrors).length) {
       setFieldErrors(localErrors);
-      setError("Please fix the highlighted fields below.");
+      const count = Object.keys(localErrors).length;
+      toast.error(count === 1 ? Object.values(localErrors)[0] : `Fix ${count} fields below.`);
       scrollToFirstError();
       return;
     }
 
     setSaving(true);
-    setError("");
     setFieldErrors({});
+
     try {
       const payload = {
         ...form,
         price: Number(form.price),
         compareAtPrice: form.compareAtPrice ? Number(form.compareAtPrice) : null,
         stock: Number(form.stock),
+        /* drop empty rows so blank ones never reach the database */
+        specs: form.specs
+          .map((row) => ({ label: (row.label || "").trim(), value: (row.value || "").trim() }))
+          .filter((row) => row.label && row.value),
         keywords: form.keywords
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean),
       };
+
       const url = isEdit ? `/api/products/${initialProduct._id}` : "/api/products";
-      const method = isEdit ? "PUT" : "POST";
       const res = await fetch(url, {
-        method,
+        method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        // HTML error page aane pe bhi ye nahi tootega
         const { error: message, fieldErrors: serverFields } = await readApiError(res);
         setFieldErrors(serverFields);
-        setError(message);
+        toast.error(message || "Could not save product.");
         if (Object.keys(serverFields).length) scrollToFirstError();
         return;
       }
 
+      toast.success(isEdit ? "Product updated." : "Product created.");
       router.push("/admin/products");
       router.refresh();
     } catch (err) {
-      setError(
+      toast.error(
         err instanceof TypeError
           ? "Could not reach the server. Check your connection and try again."
           : err.message || "Could not save product."
@@ -233,7 +289,8 @@ export default function ProductForm({ categories, initialProduct }) {
   const metaLen = form.metaDescription.length;
   const price = Number(form.price) || 0;
   const compare = Number(form.compareAtPrice) || 0;
-  const discount = compare > price && price > 0 ? Math.round(((compare - price) / compare) * 100) : 0;
+  const discount =
+    compare > price && price > 0 ? Math.round(((compare - price) / compare) * 100) : 0;
   const keywordChips = form.keywords
     .split(",")
     .map((s) => s.trim())
@@ -243,12 +300,12 @@ export default function ProductForm({ categories, initialProduct }) {
     <button
       type="submit"
       disabled={saving}
-      className={`flex w-full items-center justify-center gap-2 rounded-lg bg-[#141414] py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#BF9A3A] disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+      className={`flex w-full items-center justify-center gap-2 rounded-[4px] bg-[#132c47] py-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#770800] disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
     >
       {saving && (
         <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
       )}
-      {saving ? "Saving..." : isEdit ? "Update Product" : "Create Product"}
+      {saving ? "Saving…" : isEdit ? "Update product" : "Create product"}
     </button>
   );
 
@@ -257,11 +314,16 @@ export default function ProductForm({ categories, initialProduct }) {
       {/* ---------- header ---------- */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[24px] font-medium leading-tight tracking-[-0.01em] text-[#141414] sm:text-[28px]">
+          <span className="mb-2 block text-[9px] font-bold uppercase tracking-[0.28em] text-[#770800]">
+            Catalogue
+          </span>
+          <h1 className="font-serif text-[26px] leading-tight text-[#132c47] sm:text-[32px]">
             {isEdit ? "Edit Product" : "New Product"}
           </h1>
-          <p className="mt-1.5 text-[14.5px] text-[#6B6B6B]">
-            {isEdit ? "Update this piece and save your changes." : "Add a new piece to the store."}
+          <p className="mt-1.5 text-[14px] text-[#737d86]">
+            {isEdit
+              ? "Update this product and save your changes."
+              : "Add a new product to the store."}
           </p>
         </div>
 
@@ -270,14 +332,14 @@ export default function ProductForm({ categories, initialProduct }) {
             <Link
               href={`/product/${form.slug}`}
               target="_blank"
-              className="rounded-lg border border-black/10 px-4 py-2.5 text-[14px] font-medium text-[#5A5A5A] transition-colors hover:border-[#BF9A3A] hover:text-[#BF9A3A]"
+              className="rounded-[4px] border border-[#132c47]/15 px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.18em] text-[#66717c] transition-colors hover:border-[#770800] hover:text-[#770800]"
             >
               Preview
             </Link>
           )}
           <Link
             href="/admin/products"
-            className="text-[14px] font-medium text-[#6B6B6B] transition-colors hover:text-[#BF9A3A]"
+            className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#737d86] transition-colors hover:text-[#770800]"
           >
             Cancel
           </Link>
@@ -285,8 +347,7 @@ export default function ProductForm({ categories, initialProduct }) {
       </div>
 
       {/* ---------- body ---------- */}
-      <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_330px] xl:items-start">
-        {/* main column */}
+      <div className="mt-7 grid gap-6 xl:grid-cols-[1fr_330px] xl:items-start">
         <div className="min-w-0 space-y-6">
           <Card title="Basics">
             <div className="space-y-5">
@@ -294,41 +355,42 @@ export default function ProductForm({ categories, initialProduct }) {
                 label="Name"
                 value={form.name}
                 onChange={updateName}
-                placeholder="Oval Tanzanite Halo Pendant"
+                placeholder="Rehau Wicker Corner Sofa Set"
                 error={fieldErrors.name}
                 required
               />
 
               <div>
                 <label className={labelClass}>
-                  Slug <span className="ml-1 text-[#BF9A3A]">*</span>
+                  Slug <span className="ml-1 text-[#770800]">*</span>
                 </label>
-                <div className={`flex items-stretch overflow-hidden rounded-lg border transition-all focus-within:ring-2 ${
-                  fieldErrors.slug
-                    ? "border-red-400 focus-within:border-red-500 focus-within:ring-red-500/20"
-                    : "border-black/10 focus-within:border-[#BF9A3A] focus-within:ring-[#BF9A3A]/20"
-                }`}>
-                  <span className="hidden shrink-0 items-center border-r border-black/10 bg-black/[0.03] px-3 text-[13px] text-[#8A8A8A] sm:flex">
+                <div
+                  className={`flex items-stretch overflow-hidden rounded-[4px] border transition-all focus-within:ring-2 ${fieldErrors.slug
+                    ? "border-[#770800] focus-within:border-[#770800] focus-within:ring-[#770800]/20"
+                    : "border-[#132c47]/15 focus-within:border-[#770800] focus-within:ring-[#770800]/15"
+                    }`}
+                >
+                  <span className="hidden shrink-0 items-center border-r border-[#132c47]/12 bg-[#f5f3ee] px-3 text-[13px] text-[#737d86] sm:flex">
                     /product/
                   </span>
                   <input
                     required
                     value={form.slug}
-                    placeholder="oval-tanzanite-halo-pendant"
+                    placeholder="rehau-wicker-corner-sofa-set"
                     onChange={(e) => {
                       setSlugTouched(true);
                       update("slug", slugify(e.target.value));
                     }}
                     aria-invalid={Boolean(fieldErrors.slug)}
-                    className="w-full min-w-0 bg-white px-3.5 py-2.5 text-[14.5px] text-[#141414] outline-none placeholder:text-[#A5A5A5]"
+                    className="w-full min-w-0 bg-white px-3.5 py-2.5 text-[14.5px] text-[#132c47] outline-none placeholder:text-[#a3aab1]"
                   />
                 </div>
                 <FieldError>{fieldErrors.slug}</FieldError>
                 {!fieldErrors.slug && (
-                  <p className="mt-1.5 text-[12.5px] text-[#9A9A9A]">
+                  <p className="mt-1.5 text-[12.5px] text-[#9aa0a5]">
                     {isEdit
                       ? "Careful — changing this breaks existing links."
-                      : "Name se apne aap ban raha hai."}
+                      : "Generated from the name automatically."}
                   </p>
                 )}
               </div>
@@ -340,17 +402,17 @@ export default function ProductForm({ categories, initialProduct }) {
               <TextField
                 label="Price"
                 type="number"
-                prefix="R"
+                prefix="₹"
                 value={form.price}
                 onChange={(v) => update("price", v)}
-                placeholder="0.00"
+                placeholder="0"
                 error={fieldErrors.price}
                 required
               />
               <TextField
                 label="Compare-at"
                 type="number"
-                prefix="R"
+                prefix="₹"
                 value={form.compareAtPrice}
                 onChange={(v) => update("compareAtPrice", v)}
                 placeholder="Optional"
@@ -367,53 +429,52 @@ export default function ProductForm({ categories, initialProduct }) {
             </div>
 
             {compare > 0 && compare <= price && (
-              <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-[13px] text-amber-700">
+              <p className="mt-3 rounded-[4px] border border-[#770800]/25 bg-[#770800]/5 px-3.5 py-2.5 text-[13px] text-[#770800]">
                 Compare-at price should be higher than the price, otherwise no discount will show.
               </p>
             )}
           </Card>
 
-          <Card title="Images" description="Pehli image product card aur listings me dikhegi.">
+          <Card
+            title="Images"
+            description="The first image is used on product cards and listings."
+          >
             <MultiImageUploader values={form.images} onChange={(v) => update("images", v)} />
             <FieldError>{fieldErrors.images}</FieldError>
+            <div className="mt-5">
+              <TextField
+                label="Main image alt text"
+                value={form.imageAlt}
+                onChange={(v) => update("imageAlt", v)}
+                placeholder="Describe the main product image for search and screen readers"
+                hint="Applied to the first product image. Leave blank to use the product name."
+              />
+            </div>
           </Card>
 
-          <Card title="Description">
+          <Card
+            title="Description"
+            description="This is the long write-up shown on the product page. Headings, paragraphs and lists are all supported — the page layout gives it a full-width reading column, so write as much as you need."
+          >
             <RichTextEditor
               value={form.description}
               onChange={(html) => update("description", html)}
-              placeholder="Describe this piece..."
+              placeholder="Describe the materials, construction, dimensions, and who this piece is for…"
             />
           </Card>
 
-          <Card title="Specifications">
-            <div className="grid gap-5 sm:grid-cols-2">
-              <TextField label="Center Stone" value={form.specs.centerStone} onChange={(v) => updateSpec("centerStone", v)} />
-              <TextField label="Accent Stones" value={form.specs.accentStones} onChange={(v) => updateSpec("accentStones", v)} />
-              <TextField label="Metal" value={form.specs.metal} onChange={(v) => updateSpec("metal", v)} />
-              <TextField label="Total Carats" value={form.specs.totalCarats} onChange={(v) => updateSpec("totalCarats", v)} />
-              <TextField label="Total Weight" value={form.specs.totalWeight} onChange={(v) => updateSpec("totalWeight", v)} />
-              <TextField label="Size" value={form.specs.size} onChange={(v) => updateSpec("size", v)} />
-              <TextField label="Certificate" value={form.specs.certificate} onChange={(v) => updateSpec("certificate", v)} />
-            </div>
+          <Card
+            title="Specification table"
+            description="Add whatever rows this product needs. These appear as the specification table on the product page."
+          >
+            <SpecsEditor value={form.specs} onChange={(v) => update("specs", v)} />
+            <FieldError>{fieldErrors.specs}</FieldError>
           </Card>
         </div>
 
         {/* sidebar */}
         <aside className="space-y-6 xl:sticky xl:top-32">
           <Card>
-            {error && (
-              <div
-                role="alert"
-                className="mb-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-[13.5px] text-red-700"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" className="mt-[2px] h-4 w-4 shrink-0">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 8v4.5M12 16h.01" />
-                </svg>
-                <span>{error}</span>
-              </div>
-            )}
             <SaveButton />
           </Card>
 
@@ -426,11 +487,10 @@ export default function ProductForm({ categories, initialProduct }) {
                     value={form.category}
                     onChange={(e) => update("category", e.target.value)}
                     aria-invalid={Boolean(fieldErrors.category)}
-                    className={`w-full appearance-none rounded-lg border bg-white px-3.5 py-2.5 pr-10 text-[14.5px] text-[#141414] outline-none transition-all focus:ring-2 ${
-                      fieldErrors.category
-                        ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
-                        : "border-black/10 focus:border-[#BF9A3A] focus:ring-[#BF9A3A]/20"
-                    }`}
+                    className={`w-full appearance-none rounded-[4px] border bg-white px-3.5 py-2.5 pr-10 text-[14.5px] text-[#132c47] outline-none transition-all focus:ring-2 ${fieldErrors.category
+                      ? "border-[#770800] focus:border-[#770800] focus:ring-[#770800]/20"
+                      : "border-[#132c47]/15 focus:border-[#770800] focus:ring-[#770800]/15"
+                      }`}
                   >
                     <option value="">Select category</option>
                     {categories.map((c) => (
@@ -447,7 +507,7 @@ export default function ProductForm({ categories, initialProduct }) {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     aria-hidden="true"
-                    className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8A8A8A]"
+                    className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#737d86]"
                   >
                     <path d="m6 9.5 6 6 6-6" />
                   </svg>
@@ -459,23 +519,63 @@ export default function ProductForm({ categories, initialProduct }) {
                 label="Collection Tag"
                 value={form.collectionTag}
                 onChange={(v) => update("collectionTag", v)}
-                placeholder="Bridal"
+                placeholder="Poolside"
               />
 
-              {/* featured toggle */}
-              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-black/10 px-3.5 py-3">
+              {/* Featured */}
+              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[4px] border border-[#132c47]/15 px-3.5 py-3">
                 <span>
-                  <span className="block text-[14.5px] font-medium text-[#141414]">Featured</span>
-                  <span className="mt-0.5 block text-[12.5px] text-[#8A8A8A]">Show on homepage</span>
+                  <span className="block text-[14.5px] font-medium text-[#132c47]">
+                    Featured
+                  </span>
+                  <span className="mt-0.5 block text-[12.5px] text-[#737d86]">
+                    {form.hiddenFromStore
+                      ? "Hidden products can't be featured"
+                      : "Show on homepage"}
+                  </span>
                 </span>
+
                 <span className="relative inline-flex shrink-0">
                   <input
                     type="checkbox"
-                    checked={form.featured}
+                    checked={Boolean(form.featured)}
+                    disabled={Boolean(form.hiddenFromStore)}
                     onChange={(e) => update("featured", e.target.checked)}
                     className="peer sr-only"
                   />
-                  <span className="block h-6 w-11 rounded-full bg-black/15 transition-colors peer-checked:bg-[#BF9A3A]" />
+                  <span className="block h-6 w-11 rounded-full bg-[#132c47]/15 transition-colors peer-checked:bg-[#770800]" />
+                  <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5" />
+                </span>
+              </label>
+
+              {/* Hide from Store */}
+              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[4px] border border-[#770800]/20 bg-[#770800]/[0.03] px-3.5 py-3">
+                <span>
+                  <span className="block text-[14.5px] font-medium text-[#132c47]">
+                    Hide from Store
+                  </span>
+                  <span className="mt-0.5 block text-[12.5px] text-[#737d86]">
+                    Product stays accessible by direct URL but won't appear in listings
+                  </span>
+                </span>
+
+                <span className="relative inline-flex shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(form.hiddenFromStore)}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setForm((f) => ({
+                        ...f,
+                        hiddenFromStore: checked,
+                        featured: checked ? false : f.featured,   // hidden ON hote hi featured OFF
+                      }));
+                      clearFieldError("hiddenFromStore");
+                      clearFieldError("featured");
+                    }}
+                    className="peer sr-only"
+                  />
+                  <span className="block h-6 w-11 rounded-full bg-[#132c47]/15 transition-colors peer-checked:bg-[#770800]" />
                   <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5" />
                 </span>
               </label>
@@ -502,8 +602,8 @@ export default function ProductForm({ categories, initialProduct }) {
                   className={`${inputClass} resize-y`}
                 />
                 <div className="mt-1.5 flex items-center justify-between text-[12.5px]">
-                  <span className="text-[#9A9A9A]">Aim for 120–160</span>
-                  <span className={metaLen > 150 ? "text-amber-600" : "text-[#9A9A9A]"}>
+                  <span className="text-[#9aa0a5]">Aim for 120–160</span>
+                  <span className={metaLen > 150 ? "text-[#770800]" : "text-[#9aa0a5]"}>
                     {metaLen}/160
                   </span>
                 </div>
@@ -514,7 +614,7 @@ export default function ProductForm({ categories, initialProduct }) {
                   label="Keywords"
                   value={form.keywords}
                   onChange={(v) => update("keywords", v)}
-                  placeholder="pendant, tanzanite, halo"
+                  placeholder="wicker sofa, outdoor furniture, rehau"
                   hint="Comma separated."
                 />
                 {keywordChips.length > 0 && (
@@ -522,7 +622,7 @@ export default function ProductForm({ categories, initialProduct }) {
                     {keywordChips.map((k, i) => (
                       <span
                         key={`${k}-${i}`}
-                        className="rounded-full bg-[#F7F1E5] px-2.5 py-1 text-[12px] font-medium text-[#8A6E1F]"
+                        className="rounded-full bg-[#f5f3ee] px-2.5 py-1 text-[12px] font-medium text-[#66717c]"
                       >
                         {k}
                       </span>
@@ -535,21 +635,9 @@ export default function ProductForm({ categories, initialProduct }) {
         </aside>
       </div>
 
-      {/* mobile pe sidebar neeche hai, isliye ek aur save */}
+      {/* sidebar sits below the form on mobile, so repeat the save button */}
       <div className="mt-6 xl:hidden">
-        {error && (
-          <div
-            role="alert"
-            className="mb-3 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-[13.5px] text-red-700"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" className="mt-[2px] h-4 w-4 shrink-0">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 8v4.5M12 16h.01" />
-            </svg>
-            <span>{error}</span>
-          </div>
-        )}
-        <SaveButton className="py-3.5" />
+        <SaveButton />
       </div>
     </form>
   );

@@ -29,6 +29,8 @@ export default function CategoryForm({ initialCategory }) {
     slug: initialCategory?.slug || "",
     description: initialCategory?.description || "",
     image: initialCategory?.image || "",
+    metaTitle: initialCategory?.metaTitle || "",
+    metaDescription: initialCategory?.metaDescription || "",
   });
   const [slugTouched, setSlugTouched] = useState(isEdit);
   const [error, setError] = useState("");
@@ -63,7 +65,7 @@ export default function CategoryForm({ initialCategory }) {
       if (isEdit) {
         router.push("/admin/categories");
       } else {
-        setForm({ name: "", slug: "", description: "", image: "" });
+        setForm({ name: "", slug: "", description: "", image: "", metaTitle: "", metaDescription: "" });
         setSlugTouched(false);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
@@ -142,6 +144,22 @@ export default function CategoryForm({ initialCategory }) {
             value={form.image}
             onChange={(url) => setForm({ ...form, image: url })}
           />
+        </div>
+
+        <div className="border-t border-black/10 pt-5">
+          <p className="mb-4 text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[#8A8A8A]">
+            SEO Settings
+          </p>
+          <div className="space-y-5">
+            <div>
+              <label className={labelClass}>Meta Title</label>
+              <input value={form.metaTitle} maxLength={70} placeholder="Defaults to the category name" onChange={(e) => setForm({ ...form, metaTitle: e.target.value })} className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Meta Description</label>
+              <textarea value={form.metaDescription} maxLength={160} rows={3} placeholder="Defaults to the category description" onChange={(e) => setForm({ ...form, metaDescription: e.target.value })} className={`${inputClass} resize-y`} />
+            </div>
+          </div>
         </div>
 
         {error && (

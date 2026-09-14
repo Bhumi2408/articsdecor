@@ -4,7 +4,6 @@ import Image from "next/image";
 import { connectDB } from "@/lib/db";
 import BlogPost from "@/models/BlogPost";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import GalleryStrip from "@/components/GalleryStrip";
 
 const RECENT_LIMIT = 4;
 
@@ -32,8 +31,7 @@ const SearchIcon = ({ className = "" }) => (
 );
 
 export const metadata = {
-  title: "Blog | Lute Diamonds",
-  description: "Stories, styling notes and care guides from the Lute Diamonds workshop.",
+  title: "Blog - Artics Decorr",
 };
 
 export default async function BlogPage({ searchParams }) {
@@ -58,7 +56,7 @@ export default async function BlogPage({ searchParams }) {
 
   return (
     <div>
-      <Breadcrumbs title="Blog" items={[{ label: "Blog" }]} />
+      <Breadcrumbs image="/products/p16.png" title="Blog" items={[{ label: "Blog" }]} />
 
       {/* page header */}
       <div className="container-lute mt-8 text-center px-4">
@@ -79,19 +77,19 @@ export default async function BlogPage({ searchParams }) {
             defaultValue={q}
             placeholder="Search articles..."
             aria-label="Search articles"
-            className="w-full rounded-lg bg-[#F5F5F5] py-3.5 md:py-4 pl-5 pr-12 text-[14px] md:text-[15px] text-[#141414] outline-none transition-shadow placeholder:text-[#9A9A9A] focus:ring-2 focus:ring-[#BF9A3A]/40"
+            className="w-full rounded-lg bg-[#F5F5F5] py-3.5 md:py-4 pl-5 pr-12 text-[14px] md:text-[15px] text-[#141414] outline-none transition-shadow placeholder:text-[#9A9A9A] focus:ring-2 focus:ring-[#244128]/40"
           />
           <button
             type="submit"
             aria-label="Search"
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B6B6B] transition-colors hover:text-[#BF9A3A]"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B6B6B] transition-colors hover:text-[#244128]"
           >
             <SearchIcon className="h-5 w-5" />
           </button>
         </form>
       </div>
 
-      <div className="container-lute mt-10 md:mt-14 grid gap-10 lg:grid-cols-[1fr_340px] lg:gap-16">
+      <div className="container-lute mt-10 md:mt-14 grid gap-10 lg:grid-cols-[1fr_340px] lg:gap-16 mx-24">
         {/* ---------- posts ---------- */}
         <div>
           {posts.length === 0 ? (
@@ -102,7 +100,7 @@ export default async function BlogPage({ searchParams }) {
               {q && (
                 <Link
                   href="/blog"
-                  className="mt-5 inline-block rounded-md bg-[#141414] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#BF9A3A]"
+                  className="mt-5 inline-block rounded-md bg-[#141414] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#244128]"
                 >
                   Clear search
                 </Link>
@@ -130,7 +128,7 @@ export default async function BlogPage({ searchParams }) {
                       {formatDate(post.publishedAt || post.createdAt)}
                     </p>
 
-                    <h2 className="mt-2 md:mt-3 text-[20px] sm:text-[26px] md:text-[32px] font-medium leading-snug text-[#141414] transition-colors group-hover:text-[#BF9A3A]">
+                    <h2 className="mt-2 md:mt-3 text-[20px] sm:text-[26px] md:text-[32px] font-medium leading-snug text-[#141414] transition-colors group-hover:text-[#244128]">
                       {post.title}
                     </h2>
 
@@ -140,7 +138,7 @@ export default async function BlogPage({ searchParams }) {
                       </p>
                     )}
 
-                    <span className="mt-4 md:mt-6 inline-block text-[13px] md:text-[14px] font-semibold text-[#141414] underline decoration-1 underline-offset-[6px] transition-colors group-hover:text-[#BF9A3A]">
+                    <span className="mt-4 md:mt-6 inline-block text-[13px] md:text-[14px] font-semibold text-[#141414] underline decoration-1 underline-offset-[6px] transition-colors group-hover:text-[#244128]">
                       Read More
                     </span>
                   </Link>
@@ -155,7 +153,7 @@ export default async function BlogPage({ searchParams }) {
           {recentPosts.length > 0 && (
             <div>
               <h3 className="text-[18px] md:text-[22px] font-medium text-[#141414]">Recent Posts</h3>
-              <ul className="mt-5 md:mt-6 space-y-4 md:space-y-5">
+              <ul className="my-5 md:my-6 space-y-4 md:space-y-5">
                 {recentPosts.map((post) => (
                   <li key={String(post._id)}>
                     <Link href={`/blog/${post.slug}`} className="group flex items-start gap-3 md:gap-4">
@@ -174,7 +172,7 @@ export default async function BlogPage({ searchParams }) {
                         <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8A8A8A]">
                           {formatDate(post.publishedAt || post.createdAt)}
                         </p>
-                        <p className="mt-1 md:mt-1.5 text-[14px] md:text-[15px] font-medium leading-snug text-[#141414] transition-colors group-hover:text-[#BF9A3A]">
+                        <p className="mt-1 md:mt-1.5 text-[14px] md:text-[15px] font-medium leading-snug text-[#141414] transition-colors group-hover:text-[#244128]">
                           {post.title}
                         </p>
                       </div>
@@ -187,7 +185,6 @@ export default async function BlogPage({ searchParams }) {
         </aside>
       </div>
 
-      <GalleryStrip />
     </div>
   );
 }

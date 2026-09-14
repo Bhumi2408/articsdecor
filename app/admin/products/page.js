@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
-import { formatZAR } from "@/lib/format";
+import { formatINR } from "@/lib/format";
 import DeleteProductButton from "@/components/admin/DeleteProductButton";
 
 const iconProps = {
@@ -150,7 +150,7 @@ export default async function AdminProductsPage({ searchParams }) {
                     <p className="text-[15px] font-medium leading-snug text-[#141414]">{p.name}</p>
                     <p className="mt-1 text-[13px] text-[#8A8A8A]">{p.category?.name || "No category"}</p>
                     <p className="mt-1.5 text-[15px] font-medium text-[#141414]">
-                      {formatZAR(p.price)}
+                      {formatINR(p.price)}
                     </p>
                   </div>
 
@@ -222,7 +222,7 @@ export default async function AdminProductsPage({ searchParams }) {
                     </td>
                     <td className="px-5 py-4 text-[#5A5A5A]">{p.category?.name || "—"}</td>
                     <td className="whitespace-nowrap px-5 py-4 font-medium text-[#141414]">
-                      {formatZAR(p.price)}
+                      {formatINR(p.price)}
                     </td>
                     <td className="px-5 py-4">
                       <span

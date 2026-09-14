@@ -64,8 +64,8 @@ function Toolbar({ editor }) {
           type="button"
           title={b.title}
           onClick={b.run}
-          className={`w-7 h-7 text-xs rounded flex items-center justify-center ${b.className || ""} ${
-            editor.isActive(b.active, b.activeAttrs) ? "bg-gold text-white" : "hover:bg-white"
+          className={`w-7 h-7 text-xs rounded flex items-center justify-center text-[#132c47] transition-colors ${b.className || ""} ${
+            editor.isActive(b.active, b.activeAttrs) ? "bg-[#770800] !text-white" : "hover:bg-white"
           }`}
         >
           {b.label}
@@ -75,8 +75,8 @@ function Toolbar({ editor }) {
         type="button"
         title="Link"
         onClick={setLink}
-        className={`w-7 h-7 text-xs rounded flex items-center justify-center ${
-          editor.isActive("link") ? "bg-gold text-white" : "hover:bg-white"
+        className={`w-7 h-7 text-xs rounded flex items-center justify-center text-[#132c47] transition-colors ${
+          editor.isActive("link") ? "bg-[#770800] !text-white" : "hover:bg-white"
         }`}
       >
         🔗
@@ -85,7 +85,7 @@ function Toolbar({ editor }) {
         type="button"
         title="Undo"
         onClick={() => editor.chain().focus().undo().run()}
-        className="w-7 h-7 text-xs rounded flex items-center justify-center hover:bg-white"
+        className="w-7 h-7 text-xs rounded flex items-center justify-center text-[#132c47] transition-colors hover:bg-white"
       >
         ↺
       </button>
@@ -93,7 +93,7 @@ function Toolbar({ editor }) {
         type="button"
         title="Redo"
         onClick={() => editor.chain().focus().redo().run()}
-        className="w-7 h-7 text-xs rounded flex items-center justify-center hover:bg-white"
+        className="w-7 h-7 text-xs rounded flex items-center justify-center text-[#132c47] transition-colors hover:bg-white"
       >
         ↻
       </button>

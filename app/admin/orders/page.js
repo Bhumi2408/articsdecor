@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { connectDB } from "@/lib/db";
 import Order from "@/models/Order";
-import { formatZAR } from "@/lib/format";
+import { formatINR } from "@/lib/format";
 
 const STATUSES = ["all", "pending", "processing", "shipped", "delivered", "cancelled"];
 
@@ -155,7 +155,7 @@ export default async function AdminOrdersPage({ searchParams }) {
                     {o.paymentStatus}
                   </span>
                   <span className="text-[16px] font-medium text-[#141414]">
-                    {formatZAR(o.total)}
+                    {formatINR(o.total)}
                   </span>
                 </div>
               </Link>
@@ -209,7 +209,7 @@ export default async function AdminOrdersPage({ searchParams }) {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-5 py-4 text-right font-medium text-[#141414]">
-                      {formatZAR(o.total)}
+                      {formatINR(o.total)}
                     </td>
                     <td className="px-5 py-4 text-right">
                       <Link

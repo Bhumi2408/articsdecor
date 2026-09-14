@@ -1,468 +1,645 @@
 "use client";
 
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
-import { Sparkles } from "lucide-react";
+import { useWishlistStore } from "@/store/useWishlistStore";
+import { ShoppingBag, Heart } from "lucide-react";
 
-/* 👇 apne assets ke path yahan change kar lena */
-const LOGO_SRC = "/logo.png";
-const MENU_PROMO_SRC = "/home/pendants-banner.png";
+const LOGO_SRC = "/logos.png";
 
-const MARQUEE_ITEMS = [
-  "Shop online with ease",
-  "Start shopping now",
-  "Handpicked products for you",
-  "Premium quality products you can trust",
-  "Register to enjoy your first online order",
-];
-
-/* ---- mega menu content ---- */
-const MEGA_MENU = {
-  columns: [
-    {
-      title: "Jewellery",
-      links: [
-        { label: "Jewellery", href: "/shop" },
-        { label: "Polished Precious Stones", href: "/shop" },
-        { label: "Semi-Precious Polished Stones", href: "/shop" },
-      ],
-    },
-    {
-      title: "Polished Precious",
-      links: [
-        { label: "Wedding Rings", href: "/product-category/wedding-rings" },
-        { label: "Pendants", href: "/product-category/pendants" },
-        { label: "Earrings", href: "/product-category/earrings" },
-      ],
-    },
-  ],
-  promo: {
-    image: MENU_PROMO_SRC,
-    title: "Better Things In a Better Way",
-    ctaLabel: "Shop Now",
-    ctaHref: "/shop",
-  },
+const MEGA_FEATURE = {
+  image: "/products/p5.png",
+  title: "Wicker Sofa Sets",
+  copy: "German Rehau weave on powder-coated aluminium — built to stay outdoors all year.",
+  href: "/product-category/wicker-sofa-set",
+  cta: "Explore the range",
 };
 
-const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About Us" },
-  { href: "/shop", label: "Shop" },
-  { href: "/categories", label: "Categories", mega: true },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
-];
 
-/* ---------------- icons ---------------- */
-
-function Sparkle({ className = "" }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
-      <path d="M12 0c.5 5.3 1.6 8.2 4.2 9.9L24 12l-7.8 2.1C13.6 15.8 12.5 18.7 12 24c-.5-5.3-1.6-8.2-4.2-9.9L0 12l7.8-2.1C10.4 8.2 11.5 5.3 12 0z" />
+/* ============================== ICONS ============================== */
+const Ico = {
+  search: (p) => (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      {...p}
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.6-3.6" />
     </svg>
-  );
-}
-
-const iconProps = {
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 1.5,
-  strokeLinecap: "round",
-  strokeLinejoin: "round",
-  "aria-hidden": true,
+  ),
+  bag: (p) => (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...p}
+    >
+      <path d="M4.5 7.5h15l-1.1 12.1a1.5 1.5 0 0 1-1.5 1.4H7.1a1.5 1.5 0 0 1-1.5-1.4L4.5 7.5Z" />
+      <path d="M8.75 10V6.75a3.25 3.25 0 0 1 6.5 0V10" />
+    </svg>
+  ),
+  user: (p) => (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      {...p}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="10" r="3.1" />
+      <path d="M6.4 19a6.2 6.2 0 0 1 11.2 0" />
+    </svg>
+  ),
+  chevron: (p) => (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...p}
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  ),
+  menu: (p) => (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      {...p}
+    >
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  ),
+  close: (p) => (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      {...p}
+    >
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  ),
 };
 
-const SearchIcon = (p) => (
-  <svg {...iconProps} {...p}>
-    <circle cx="11" cy="11" r="7" />
-    <path d="m20 20-3.5-3.5" />
-  </svg>
-);
+/* shared class strings */
+const iconBtn =
+  "relative grid h-[38px] w-[38px] sm:h-[42px] sm:w-[42px] place-items-center rounded-full text-[var(--ad-ink)] " +
+  "transition-colors hover:bg-[var(--ad-gold-soft)] hover:text-[var(--ad-gold)] " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ad-gold)]";
 
-const BagIcon = (p) => (
-  <svg {...iconProps} {...p}>
-    <path d="M5.5 8h13l-1 12.5H6.5z" />
-    <path d="M9 10V6.8a3 3 0 0 1 6 0V10" />
-  </svg>
-);
-
-const HeartIcon = (p) => (
-  <svg {...iconProps} {...p}>
-    <path d="M12 20s-7.5-4.6-7.5-9.4A4.1 4.1 0 0 1 12 8.2a4.1 4.1 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20z" />
-  </svg>
-);
-
-const UserIcon = (p) => (
-  <svg {...iconProps} {...p}>
-    <circle cx="12" cy="12" r="9" />
-    <circle cx="12" cy="10" r="3.2" />
-    <path d="M6.2 19a6.4 6.4 0 0 1 11.6 0" />
-  </svg>
-);
-
-const HomeIcon = (p) => (
-  <svg {...iconProps} {...p}>
-    <path d="M4 10.5 12 4l8 6.5V20H4z" />
-    <path d="M9.5 20v-5.5h5V20" />
-  </svg>
-);
-
-const ChevronDown = (p) => (
-  <svg {...iconProps} {...p}>
-    <path d="m6 9.5 6 6 6-6" />
-  </svg>
-);
-
-/* ---------------- header ---------------- */
-
-export default function Header() {
-  const items = useCartStore((s) => s.items);
+/* ============================== HEADER ============================== */
+export default function Header({ logoSrc = LOGO_SRC, onSearch }) {
   const pathname = usePathname();
-  const router = useRouter();
 
-  const [mounted, setMounted] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [catOpen, setCatOpen] = useState(false);
-  const [mobileCatOpen, setMobileCatOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [openDrop, setOpenDrop] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [user, setUser] = useState(null);
-  const searchRef = useRef(null);
+  const [drawer, setDrawer] = useState(false);
+  const [mobileAcc, setMobileAcc] = useState(null);
+  const [categories, setCategories] = useState([]);
+
+  const closeTimer = useRef(null);
+  const searchInput = useRef(null);
+  const cartItems = useCartStore((s) => s.items);
+  const wishlistIds = useWishlistStore((s) => s.wishlistIds);
+
+  const cartCount = cartItems.reduce(
+    (total, item) => total + (item.qty || 1),
+    0,
+  );
+
+  const wishlistCount = wishlistIds.length;
 
   useEffect(() => {
-    setMounted(true);
-    fetch("/api/auth/me")
-      .then((r) => r.json())
-      .then((d) => setUser(d.user))
-      .catch(() => {});
-  }, [pathname]);
-
-  useEffect(() => {
-    setMenuOpen(false);
-    setCatOpen(false);
-    setMobileCatOpen(false);
-    setSearchOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
-    if (searchOpen) searchRef.current?.focus();
-  }, [searchOpen]);
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape") {
-        setCatOpen(false);
-        setSearchOpen(false);
-        setMenuOpen(false);
-      }
+      if (e.key !== "Escape") return;
+      setSearchOpen(false);
+      setOpenDrop(null);
+      setDrawer(false);
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  const cartCount = mounted ? items.reduce((sum, i) => sum + i.qty, 0) : 0;
-  const isActive = (href) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  useEffect(() => {
+    if (searchOpen && searchInput.current) searchInput.current.focus();
+  }, [searchOpen]);
+
+  useEffect(() => {
+    document.body.style.overflow = drawer ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [drawer]);
+
+  useEffect(() => {
+    setDrawer(false);
+    setOpenDrop(null);
+    setSearchOpen(false);
+    setMobileAcc(null);
+  }, [pathname]);
+
+  useEffect(() => {
+  let cancelled = false;
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch("/api/categories", {
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+
+      const data = await res.json();
+
+      if (!cancelled) {
+        setCategories(Array.isArray(data?.items) ? data.items : []);
+      }
+    } catch (error) {
+      console.error("CATEGORY MENU ERROR:", error);
+
+      if (!cancelled) {
+        setCategories([]);
+      }
+    }
+  };
+
+  fetchCategories();
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
+
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+const productCategories = categories.map((category) => ({
+  label: category.name,
+  href: `/product-category/${category.slug}`,
+}));
+
+const NAV_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about-us" },
+  {
+    label: "Products",
+    href: "/products",
+    children: productCategories,
+  },
+  { label: "Shop", href: "/shop" },
+  { label: "Materials", href: "/materials" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
+];
+
+  const hoverIn = (label) => {
+    clearTimeout(closeTimer.current);
+    setOpenDrop(label);
+  };
+  const hoverOut = () => {
+    closeTimer.current = setTimeout(() => setOpenDrop(null), 180);
+  };
 
   const submitSearch = (e) => {
     e.preventDefault();
-    const q = query.trim();
-    if (!q) return;
-    router.push(`/shop?q=${encodeURIComponent(q)}`);
-    setSearchOpen(false);
-    setQuery("");
+    const q = new FormData(e.currentTarget).get("q");
+    if (onSearch) onSearch(q);
+    else window.location.href = "/shop?s=" + encodeURIComponent(q || "");
   };
 
-  const navItemClass = (active) =>
-    `whitespace-nowrap text-[13px] font-semibold uppercase tracking-[0.05em] transition-colors hover:text-[#BF9A3A] ${
-      active ? "text-[#BF9A3A]" : "text-[#1B1B1B]"
-    }`;
+  const isActive = (href) =>
+    href === "/"
+      ? pathname === "/"
+      : pathname === href || pathname.startsWith(href + "/");
+
+  const productsActive =
+    isActive("/products") ||
+    pathname.startsWith("/product-category") ||
+    pathname.startsWith("/product/");
+
+
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white">
-        <style>{`
-          @keyframes luteMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-          .lute-marquee__track { display: flex; width: max-content; animation: luteMarquee 42s linear infinite; }
-          .lute-marquee:hover .lute-marquee__track { animation-play-state: paused; }
-          @keyframes luteFadeDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-          .lute-mega { animation: luteFadeDown .18s ease-out; }
-          @media (prefers-reduced-motion: reduce) {
-            .lute-marquee__track, .lute-mega { animation: none; }
+      <header className="font-artics fixed inset-x-0 top-0 z-[1000]">
+        <div
+          className={
+            "mx-auto max-w-[1780px] transition-all duration-300 " +
+            (scrolled
+              ? "px-3 py-2 sm:px-[60px] sm:py-2.5"
+              : "px-3 py-3 sm:px-[60px] sm:py-[18px]")
           }
-          /* bottom nav ke liye mobile pe page ko jagah do */
-          @media (max-width: 1023px) { body { padding-bottom: 68px; } }
-        `}</style>
-
-        {/* ---------- marquee top bar ---------- */}
-        <div className="lute-marquee overflow-hidden bg-[#100F0D] py-2.5">
-          <div className="lute-marquee__track">
-            {[0, 1].map((dup) => (
-              <div key={dup} className="flex items-center" aria-hidden={dup === 1}>
-                {MARQUEE_ITEMS.map((text) => (
-                  <div key={text} className="flex items-center">
-                    <span className="whitespace-nowrap px-7 text-[11px] font-bold uppercase tracking-[0.1em] text-white md:px-10 md:text-[13px]">
-                      {text}
-                    </span>
-                    <Sparkles className="h-4 w-4 shrink-0 text-[#C9A227]" />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ---------- main bar + mega menu ---------- */}
-        <div className="relative border-b border-black/[0.07] bg-white" onMouseLeave={() => setCatOpen(false)}>
-          <div className="relative flex h-[80px] w-full items-center justify-between gap-6 px-[30px]">
-            {/* left: nav (desktop) */}
-            <nav className="hidden items-center gap-5 lg:flex">
-              {NAV_LINKS.map((link) =>
-                link.mega ? (
-                  <button
-                    key={link.href}
-                    type="button"
-                    onMouseEnter={() => setCatOpen(true)}
-                    onClick={() => setCatOpen((v) => !v)}
-                    aria-expanded={catOpen}
-                    className={`flex items-center gap-1 ${navItemClass(catOpen)}`}
-                  >
-                    {link.label}
-                    <ChevronDown className={`h-4 w-4 transition-transform ${catOpen ? "rotate-180" : ""}`} />
-                  </button>
-                ) : (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onMouseEnter={() => setCatOpen(false)}
-                    className={navItemClass(isActive(link.href))}
-                  >
-                    {link.label}
-                  </Link>
-                )
-              )}
-            </nav>
-
-            {/* left: burger (mobile) */}
-            <button
-              type="button"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Toggle menu"
-              aria-expanded={menuOpen}
-              className="flex h-9 w-9 shrink-0 items-center justify-center text-[#1B1B1B] lg:hidden"
-            >
-              <svg {...iconProps} className="h-6 w-6">
-                {menuOpen ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-              </svg>
-            </button>
-
-            {/* center: logo (truly centered) */}
+        >
+          <div
+            className={
+              "relative flex items-center rounded-full bg-white pl-4 pr-2 sm:pl-[22px] sm:pr-5 " +
+              "transition-all duration-300 " +
+              (scrolled
+                ? "h-[58px] shadow-[0_6px_22px_rgba(28,22,14,0.15)] sm:h-[66px]"
+                : "h-16 shadow-[0_10px_34px_rgba(28,22,14,0.10)] sm:h-[76px]")
+            }
+          >
+            {/* logo */}
             <Link
               href="/"
-              aria-label="Lute Diamonds home"
-              className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center"
+              aria-label="Artics Decorr — home"
+              className="flex shrink-0 items-center"
             >
-              <img src={LOGO_SRC} alt="Lute Diamonds" className="h-10 w-auto md:h-[60px]" />
+              <img
+                src={logoSrc}
+                alt="Artics Decorr"
+                className={
+                  "block w-auto transition-all duration-300 " +
+                  (scrolled ? "h-[42px] sm:h-[50px]" : "h-[42px] sm:h-[50px]")
+                }
+              />
             </Link>
 
-            {/* right: icons (desktop only — mobile pe bottom bar hai) */}
-            <div className="hidden shrink-0 items-center gap-4 text-[#1B1B1B] lg:flex">
+            {/* desktop menu */}
+            <nav aria-label="Main" className="ml-auto hidden xl:block">
+              <ul className="flex items-center gap-[22px] 2xl:gap-[30px]">
+                {NAV_LINKS.map((item) => {
+                  const active = item.children
+                    ? productsActive
+                    : isActive(item.href);
+                  const open = openDrop === item.label;
+                  return (
+                    <li
+                      key={item.label}
+                      className="static"
+                      onMouseEnter={() => item.children && hoverIn(item.label)}
+                      onMouseLeave={() => item.children && hoverOut()}
+                    >
+                      <Link
+                        href={item.href}
+                        aria-expanded={item.children ? open : undefined}
+                        className={
+                          "relative inline-flex items-center gap-1.5 whitespace-nowrap py-7 text-sm font-bold uppercase " +
+                          "tracking-[0.4px] transition-colors 2xl:text-[15px] " +
+                          "after:absolute after:inset-x-0 after:bottom-[22px] after:h-0.5 after:origin-left " +
+                          "after:bg-[var(--ad-gold)] after:transition-transform after:duration-200 after:content-[''] " +
+                          "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ad-gold)] " +
+                          (active
+                            ? "text-[var(--ad-gold)] after:scale-x-100"
+                            : "text-[var(--ad-ink)] after:scale-x-0 hover:text-[var(--ad-gold)] hover:after:scale-x-100")
+                        }
+                      >
+                        {item.label}
+                        {item.children && (
+                          <Ico.chevron
+                            className={
+                              "h-3.5 w-3.5 transition-transform duration-200 " +
+                              (open ? "rotate-180" : "")
+                            }
+                          />
+                        )}
+                      </Link>
+
+                      {/* ---------- MEGA MENU ---------- */}
+                      {item.children && (
+                        <div
+                          className={
+                            "absolute inset-x-0 top-full pt-3.5 transition-all duration-200 " +
+                            (open
+                              ? "visible translate-y-0 opacity-100"
+                              : "invisible translate-y-2.5 opacity-0")
+                          }
+                        >
+                          <div className="overflow-hidden rounded-[26px] border border-[var(--ad-line)] bg-white shadow-[0_30px_70px_-20px_rgba(28,22,14,0.28)]">
+                            <div className="grid grid-cols-[1fr_300px] gap-8 px-8 pb-6 pt-7">
+                              <ul className="grid grid-cols-2 gap-x-[18px] gap-y-0.5 xl:grid-cols-3">
+                                {item.children.map((c) => (
+                                  <li key={c.label}>
+                                    <Link
+                                      href={c.href}
+                                      className="group flex items-center rounded-xl px-3 py-[8px] text-sm font-medium leading-tight text-[#3B342C] transition-colors hover:bg-[var(--ad-gold-soft)] hover:text-[var(--ad-gold)]"
+                                    >
+                                      <span className="block h-[1.5px] w-0 shrink-0 bg-[var(--ad-gold)] transition-all duration-200 group-hover:mr-2.5 group-hover:w-3.5" />
+                                      {c.label}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+
+                              <Link
+                                href={MEGA_FEATURE.href}
+                                className="group flex flex-col overflow-hidden rounded-[18px] border border-[var(--ad-line)] bg-[var(--ad-gold-soft)]"
+                              >
+                                <span className="block h-[150px] overflow-hidden">
+                                  <img
+                                    src={MEGA_FEATURE.image}
+                                    alt=""
+                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  />
+                                </span>
+                                <span className="block px-[18px] pb-[18px] pt-4">
+                                  <strong className="mb-1.5 block text-[15px] font-semibold text-[var(--ad-ink)]">
+                                    {MEGA_FEATURE.title}
+                                  </strong>
+                                  <span className="mb-3 block text-[12.5px] leading-relaxed text-[var(--ad-ink-soft)]">
+                                    {MEGA_FEATURE.copy}
+                                  </span>
+                                  <span className="inline-block border-b-[1.5px] border-current pb-px text-[12.5px] font-semibold text-[var(--ad-gold)]">
+                                    {MEGA_FEATURE.cta}
+                                  </span>
+                                </span>
+                              </Link>
+                            </div>
+
+                            <div className="flex items-center gap-7 border-t border-[var(--ad-line)] bg-[#FCFAF6] px-8 py-4">
+                              <Link
+                                href="/products"
+                                className="text-[13px] font-medium text-[var(--ad-ink)] transition-colors hover:text-[var(--ad-gold)]"
+                              >
+                                View all products
+                              </Link>
+                              <Link
+                                href="/materials"
+                                className="text-[13px] font-medium text-[var(--ad-ink)] transition-colors hover:text-[var(--ad-gold)]"
+                              >
+                                Materials we use
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+
+            {/* tools */}
+            <div className="ml-auto flex shrink-0 items-center gap-1 xl:ml-6">
+              <span
+                aria-hidden="true"
+                className="mr-3.5 hidden h-[26px] w-px bg-[var(--ad-line)] xl:block"
+              />
+
               <button
                 type="button"
-                onClick={() => setSearchOpen((v) => !v)}
+                onClick={() => setSearchOpen((s) => !s)}
                 aria-label="Search"
-                aria-expanded={searchOpen}
-                className="transition-colors hover:text-[#BF9A3A]"
+                className={iconBtn}
               >
-                <SearchIcon className="h-[26px] w-[26px]" />
+                <Ico.search className="h-5 w-5 sm:h-[21px] sm:w-[21px]" />
               </button>
 
-              <Link href="/cart" aria-label="Cart" className="relative transition-colors hover:text-[#BF9A3A]">
-                <BagIcon className="h-[26px] w-[26px]" />
-                {cartCount > 0 && (
-                  <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#BF9A3A] px-1 text-[10px] font-semibold text-white">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
+              <div className="flex items-center gap-4">
+                {/* WISHLIST */}
+                <Link
+                  href="/wishlist"
+                  aria-label="Wishlist"
+                  className="relative flex h-10 w-10 items-center justify-center text-[#172b40] transition-colors hover:text-[var(--ad-gold)]"
+                >
+                  <Heart className="h-[21px] w-[21px]" strokeWidth={1.5} />
 
-              <Link href="/wishlist" aria-label="Wishlist" className="transition-colors hover:text-[#BF9A3A]">
-                <HeartIcon className="h-[26px] w-[26px]" />
-              </Link>
-
-              <Link
-                href={user ? "/account" : "/account/login"}
-                title={user ? `Hi, ${user.name.split(" ")[0]}` : "My Account"}
-                aria-label={user ? "My account" : "Sign in"}
-                className="transition-colors hover:text-[#BF9A3A]"
-              >
-                <UserIcon className="h-[26px] w-[26px]" />
-              </Link>
-            </div>
-
-            {/* mobile: sirf search right me */}
-            <button
-              type="button"
-              onClick={() => setSearchOpen((v) => !v)}
-              aria-label="Search"
-              className="h-9 w-9 shrink-0 text-[#1B1B1B] lg:hidden"
-            >
-              <SearchIcon className="mx-auto h-[22px] w-[22px]" />
-            </button>
-          </div>
-
-          {/* ---------- mega dropdown ---------- */}
-          {catOpen && (
-            <div className="lute-mega absolute left-0 right-0 top-full hidden border-t border-black/[0.07] bg-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.35)] lg:block">
-              <div className="grid w-full grid-cols-[1fr_1fr_1.5fr] gap-10 px-[30px] py-10">
-                {MEGA_MENU.columns.map((col) => (
-                  <div key={col.title}>
-                    <h3 className="text-[20px] font-semibold text-[#1B1B1B]">{col.title}</h3>
-                    <ul className="mt-4 space-y-[12px]">
-                      {col.links.map((l) => (
-                        <li key={l.href}>
-                          <Link href={l.href} className="text-[16px] text-[#3A3A3A] transition-colors hover:text-[#BF9A3A]">
-                            {l.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-
-                {/* promo card */}
-                <div className="relative h-[370px] overflow-hidden rounded-xl bg-[#0C2C33]">
-                  <img
-                    src={MEGA_MENU.promo.image}
-                    alt=""
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
-                  <div className="relative flex h-full flex-col justify-center gap-7 p-12">
-                    <h4 className="max-w-[280px] text-[40px] font-medium leading-[1.15] text-white">
-                      {MEGA_MENU.promo.title}
-                    </h4>
-                    <Link
-                      href={MEGA_MENU.promo.ctaHref}
-                      className="inline-flex w-fit items-center rounded-lg bg-white px-6 py-3 text-[15px] font-semibold text-[#1B1B1B] transition-colors hover:bg-[#F3E9D4]"
+                  {wishlistCount > 0 && (
+                    <span
+                      className="
+          absolute
+          right-0
+          top-0
+          flex
+          h-[17px]
+          min-w-[17px]
+          items-center
+          justify-center
+          rounded-full
+          bg-[var(--ad-gold)]
+          px-1
+          text-[9px]
+          font-bold
+          leading-none
+          text-white
+          ring-2
+          ring-white
+        "
                     >
-                      {MEGA_MENU.promo.ctaLabel}
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+                      {wishlistCount > 99 ? "99+" : wishlistCount}
+                    </span>
+                  )}
+                </Link>
 
-          {/* search drawer */}
-          {searchOpen && (
-            <div className="border-t border-black/[0.07] bg-white">
-              <form onSubmit={submitSearch} className="flex w-full items-center gap-3 px-[30px] py-3">
-                <SearchIcon className="h-5 w-5 text-[#8A8A8A]" />
-                <input
-                  ref={searchRef}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search for rings, necklaces, earrings…"
-                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-[#9A9A9A]"
-                />
-                <button type="submit" className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#BF9A3A]">
-                  Search
-                </button>
-              </form>
+                {/* CART */}
+                <Link
+                  href="/cart"
+                  aria-label="Cart"
+                  className="relative flex h-10 w-10 items-center justify-center text-[#172b40] transition-colors hover:text-[var(--ad-gold)]"
+                >
+                  <ShoppingBag
+                    className="h-[21px] w-[21px]"
+                    strokeWidth={1.5}
+                  />
+
+                  {cartCount > 0 && (
+                    <span
+                      className="
+          absolute
+          right-0
+          top-0
+          flex
+          h-[17px]
+          min-w-[17px]
+          items-center
+          justify-center
+          rounded-full
+          bg-[var(--ad-gold)]
+          px-1
+          text-[9px]
+          font-bold
+          leading-none
+          text-white
+          ring-2
+          ring-white
+        "
+                    >
+                      {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                  )}
+                </Link>
+              </div>
+
+              <Link href="/account" aria-label="Account" className={iconBtn}>
+                <Ico.user className="h-5 w-5 sm:h-[21px] sm:w-[21px]" />
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setDrawer(true)}
+                aria-label="Open menu"
+                className={iconBtn + " xl:hidden"}
+              >
+                <Ico.menu className="h-5 w-5 sm:h-[21px] sm:w-[21px]" />
+              </button>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* ---------- mobile menu ---------- */}
-        {menuOpen && (
-          <nav className="max-h-[70vh] overflow-y-auto border-b border-black/[0.07] bg-white px-[30px] py-4 lg:hidden">
-            {NAV_LINKS.map((link) =>
-              link.mega ? (
-                <div key={link.href} className="border-b border-black/5">
-                  <button
-                    type="button"
-                    onClick={() => setMobileCatOpen((v) => !v)}
-                    aria-expanded={mobileCatOpen}
-                    className="flex w-full items-center justify-between py-3 text-[14px] font-semibold uppercase tracking-[0.05em]"
-                  >
-                    {link.label}
-                    <ChevronDown className={`h-4 w-4 transition-transform ${mobileCatOpen ? "rotate-180" : ""}`} />
-                  </button>
-                  {mobileCatOpen && (
-                    <div className="pb-3">
-                      {MEGA_MENU.columns.map((col) => (
-                        <div key={col.title} className="mb-3">
-                          <p className="py-1 text-[13px] font-semibold text-[#1B1B1B]">{col.title}</p>
-                          {col.links.map((l) => (
-                            <Link key={l.href} href={l.href} className="block py-2 pl-3 text-[14px] text-[#4A4A4A]">
-                              {l.label}
-                            </Link>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`block border-b border-black/5 py-3 text-[14px] font-semibold uppercase tracking-[0.05em] ${
-                    isActive(link.href) ? "text-[#BF9A3A]" : "text-[#1B1B1B]"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              )
-            )}
-          </nav>
-        )}
+        {/* search panel */}
+        <div
+          className={
+            "mx-auto max-w-[1780px] overflow-hidden px-3 transition-all duration-300 sm:px-[26px] " +
+            (searchOpen ? "max-h-[120px]" : "max-h-0")
+          }
+        >
+          <form
+            onSubmit={submitSearch}
+            className="mt-2.5 flex items-center gap-2.5 rounded-full bg-white py-2.5 pl-5 pr-3 shadow-[0_10px_34px_rgba(28,22,14,0.12)] sm:pl-6"
+          >
+            <Ico.search className="h-[21px] w-[21px] shrink-0 text-[var(--ad-ink-soft)]" />
+            <input
+              ref={searchInput}
+              name="q"
+              type="search"
+              placeholder="Search wicker sofas, loungers, gazebos…"
+              className="ad-search-input min-w-0 flex-1 border-0 bg-transparent py-2 text-[15px] text-[var(--ad-ink)] outline-none placeholder:text-[#9d968c]"
+            />
+            <button
+              type="submit"
+              className="rounded-full bg-[var(--ad-gold)] px-4 py-2.5 text-[11.5px] font-semibold uppercase tracking-wider text-white sm:px-7 sm:py-3 sm:text-[12.5px]"
+            >
+              Search
+            </button>
+            <button
+              type="button"
+              onClick={() => setSearchOpen(false)}
+              aria-label="Close search"
+              className="grid place-items-center p-1.5 text-[var(--ad-ink-soft)]"
+            >
+              <Ico.close className="h-5 w-5" />
+            </button>
+          </form>
+        </div>
       </header>
 
-      {/* ---------- mobile bottom nav (fixed) ---------- */}
-      <nav
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_-12px_rgba(0,0,0,0.35)] lg:hidden"
-        aria-label="Quick navigation"
+      {/* ---------- mobile drawer ---------- */}
+      <div
+        onClick={() => setDrawer(false)}
+        className={
+          "fixed inset-0 z-[1100] bg-[rgba(28,22,14,0.45)] transition-opacity duration-300 " +
+          (drawer ? "visible opacity-100" : "invisible opacity-0")
+        }
+      />
+
+      <aside
+        aria-hidden={!drawer}
+        className={
+          "font-artics fixed inset-y-0 right-0 z-[1101] w-[min(380px,88vw)] overflow-y-auto bg-white " +
+          "transition-transform duration-300 ease-out " +
+          (drawer ? "translate-x-0" : "translate-x-full")
+        }
       >
-        <ul className="grid grid-cols-5">
-          {[
-            { href: "/", label: "Home", Icon: HomeIcon },
-            { href: "/shop", label: "Shop", Icon: SearchIcon },
-            { href: "/wishlist", label: "Wishlist", Icon: HeartIcon },
-            { href: "/cart", label: "Cart", Icon: BagIcon, badge: cartCount },
-            {
-              href: user ? "/account" : "/account/login",
-              label: user ? user.name.split(" ")[0] : "Account",
-              Icon: UserIcon,
-            },
-          ].map(({ href, label, Icon, badge }) => {
-            const active = isActive(href);
+        <div className="flex items-center justify-between border-b border-[var(--ad-line)] px-5 py-[18px]">
+          <img src={logoSrc} alt="Artics Decorr" className="h-12 w-auto" />
+          <button
+            type="button"
+            onClick={() => setDrawer(false)}
+            aria-label="Close menu"
+            className="text-[var(--ad-ink)]"
+          >
+            <Ico.close className="h-6 w-6" />
+          </button>
+        </div>
+
+        <nav>
+          {NAV_LINKS.map((item) => {
+            const active = item.children ? productsActive : isActive(item.href);
+            const accOpen = mobileAcc === item.label;
             return (
-              <li key={label}>
-                <Link
-                  href={href}
-                  className={`flex flex-col items-center gap-1 py-2.5 transition-colors ${
-                    active ? "text-[#BF9A3A]" : "text-[#1B1B1B]"
-                  }`}
-                >
-                  <span className="relative">
-                    <Icon className="h-[22px] w-[22px]" />
-                    {badge > 0 && (
-                      <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#BF9A3A] px-1 text-[10px] font-semibold text-white">
-                        {badge}
-                      </span>
-                    )}
-                  </span>
-                  <span className="max-w-[64px] truncate text-[10px] font-medium">{label}</span>
-                </Link>
-              </li>
+              <div key={item.label} className="border-b border-[#F5F1EA]">
+                <div className="flex items-center justify-between pr-3">
+                  <Link
+                    href={item.href}
+                    className={
+                      "flex-1 px-5 py-4 text-sm font-bold uppercase tracking-[0.4px] " +
+                      (active
+                        ? "text-[var(--ad-gold)]"
+                        : "text-[var(--ad-ink)]")
+                    }
+                  >
+                    {item.label}
+                  </Link>
+                  {item.children && (
+                    <button
+                      type="button"
+                      onClick={() => setMobileAcc(accOpen ? null : item.label)}
+                      aria-label={"Toggle " + item.label}
+                      className="p-2 text-[var(--ad-ink-soft)]"
+                    >
+                      <Ico.chevron
+                        className={
+                          "h-[18px] w-[18px] transition-transform duration-200 " +
+                          (accOpen ? "rotate-180" : "")
+                        }
+                      />
+                    </button>
+                  )}
+                </div>
+
+                {item.children && (
+                  <div
+                    className={
+                      "overflow-hidden bg-[#FCFAF6] transition-all duration-300 " +
+                      (accOpen ? "max-h-[760px]" : "max-h-0")
+                    }
+                  >
+                    {item.children.map((c) => (
+                      <Link
+                        key={c.label}
+                        href={c.href}
+                        className="block py-[11px] pl-[34px] pr-5 text-[13.5px] text-[#4a423a] hover:text-[var(--ad-gold)]"
+                      >
+                        {c.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             );
           })}
-        </ul>
-      </nav>
+        </nav>
+
+        <div className="px-5 pb-9 pt-6">
+          <p className="mb-2 text-[12.5px] leading-relaxed text-[var(--ad-ink-soft)]">
+            A4/3/15, G.T. Road, Vijay Nagar, Ghaziabad 201009
+          </p>
+          <a
+            href="tel:+918860166301"
+            className="text-sm font-semibold text-[var(--ad-gold)]"
+          >
+            +91 88601 66301
+          </a>
+        </div>
+      </aside>
     </>
   );
 }

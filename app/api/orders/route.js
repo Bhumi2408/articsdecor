@@ -21,8 +21,10 @@ export async function POST(req) {
   await connectDB();
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
-  const shippingFee = subtotal >= 50000 ? 0 : 500;
-  const total = subtotal + shippingFee;
+  // Shipping is free for every order; calculate this server-side as well so
+  // the payment amount always matches the checkout UI.
+  const shippingFee = 0;
+  const total = subtotal;
 
   const session = await getCurrentUser();
 

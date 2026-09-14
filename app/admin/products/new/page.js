@@ -8,7 +8,6 @@ export default async function NewProductPage() {
 
   return (
     <div>
-      <h1 className="font-serif text-3xl mb-8">Add Product</h1>
       <ProductForm categories={JSON.parse(JSON.stringify(categories))} />
     </div>
   );

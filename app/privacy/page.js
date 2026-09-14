@@ -4,9 +4,9 @@ import LegalPage, { P, UL, LI, Note } from "@/components/LegalPage";
 import { COMPANY } from "@/lib/company";
 
 export const metadata = {
-  title: "Privacy Policy | Lute Diamonds",
+  title: "Privacy Policy - Artics Decorr",
   description:
-    "How Lute Diamonds (Pty) Ltd collects, uses and protects your personal information under POPIA.",
+    "Read the Artics Decorr Privacy Policy to understand how we collect, use, protect and manage your personal information.",
 };
 
 const SECTIONS = [
@@ -16,331 +16,559 @@ const SECTIONS = [
     body: (
       <>
         <P>
-          {COMPANY.legalName} respects your privacy. This policy explains what personal information
-          we collect when you visit {COMPANY.website.replace("https://", "")}, why we collect it,
-          who we share it with, and the rights you have over it.
+          {COMPANY.legalName} respects your privacy and is committed to protecting
+          your personal information. This Privacy Policy explains how we collect,
+          use, store and protect information when you visit{" "}
+          {COMPANY.website.replace("https://", "")}, create an account, place an
+          order, contact us or otherwise use our website and services.
         </P>
+
         <P>
-          We process personal information in line with the Protection of Personal Information Act 4
-          of 2013 (POPIA). We are the responsible party for the information described here.
+          By using our website, you acknowledge that your information may be
+          processed as described in this Privacy Policy. We only collect
+          information that is reasonably required to operate our website,
+          process orders, provide customer support and improve our services.
         </P>
       </>
     ),
   },
+
   {
-    id: "information-officer",
-    heading: "Information Officer",
+    id: "information-we-collect",
+    heading: "Information We Collect",
     body: (
       <>
         <P>
-          Questions about this policy, or requests about your personal information, should go to
-          our Information Officer:
+          Depending on how you interact with Artics Decorr, we may collect the
+          following types of information:
         </P>
-        <UL>
-          {COMPANY.informationOfficer && (
-            <LI>
-              <strong className="font-medium text-[#141414]">Name:</strong>{" "}
-              {COMPANY.informationOfficer}
-            </LI>
-          )}
-          <LI>
-            <strong className="font-medium text-[#141414]">Email:</strong>{" "}
-            <a href={`mailto:${COMPANY.email}`} className="text-[#BF9A3A] hover:underline">
-              {COMPANY.email}
-            </a>
-          </LI>
-          <LI>
-            <strong className="font-medium text-[#141414]">Post:</strong> {COMPANY.legalName},{" "}
-            {COMPANY.address}
-          </LI>
-        </UL>
-      </>
-    ),
-  },
-  {
-    id: "what-we-collect",
-    heading: "What we collect",
-    body: (
-      <>
-        <P>We keep this deliberately minimal. Depending on how you use the site, we may hold:</P>
+
         <UL>
           <LI>
-            <strong className="font-medium text-[#141414]">Account details</strong> — your name,
-            email address and an encrypted version of your password. We do not ask for a phone
-            number or a social login to register.
+            <strong className="font-medium text-[#132c47]">
+              Account information
+            </strong>{" "}
+            — your name, email address, password and other information required
+            to create and manage your account.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">Order details</strong> — delivery
-            address, contact number for the courier, the items you bought, and your order history.
+            <strong className="font-medium text-[#132c47]">
+              Contact information
+            </strong>{" "}
+            — your phone number, email address and other contact details when you
+            contact us or submit an enquiry.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">Correspondence</strong> — messages you
-            send us by email, the contact form or social media, and our replies.
+            <strong className="font-medium text-[#132c47]">
+              Order information
+            </strong>{" "}
+            — billing and delivery details, products ordered, order value,
+            delivery preferences and order history.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">Content you post</strong> — product
-            reviews, ratings and wishlist items.
+            <strong className="font-medium text-[#132c47]">
+              Customer communications
+            </strong>{" "}
+            — messages, enquiries, feedback and information you provide through
+            our contact forms, email, phone or other communication channels.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">Technical information</strong> — IP
-            address, browser and device type, pages viewed and referring links, collected through
-            cookies and server logs.
+            <strong className="font-medium text-[#132c47]">
+              Website activity
+            </strong>{" "}
+            — pages visited, products viewed, browsing behaviour, referring
+            pages and interactions with our website.
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Technical information
+            </strong>{" "}
+            — IP address, browser type, device type, operating system and
+            information collected through cookies and server logs.
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Reviews and wishlist information
+            </strong>{" "}
+            — product reviews, ratings, wishlist items and other content you
+            choose to submit on the website.
           </LI>
         </UL>
+
         <Note>
-          We never see or store your full card number, CVV or banking login. Card payments are
-          entered directly on {COMPANY.paymentProcessor}'s secure environment. We only receive
-          confirmation that a payment succeeded or failed.
+          We do not intentionally store your complete card number, CVV or
+          banking credentials on our website. Payment information is handled
+          through the payment service used for your order. We may receive
+          payment confirmation, transaction status and related information
+          necessary to complete your order.
         </Note>
       </>
     ),
   },
+
   {
-    id: "why-we-process",
-    heading: "Why we process it",
+    id: "how-we-use-information",
+    heading: "How We Use Your Information",
     body: (
       <>
+        <P>
+          We use the information we collect for legitimate business and
+          customer-service purposes, including:
+        </P>
+
         <UL>
           <LI>
-            <strong className="font-medium text-[#141414]">To fulfil your order</strong> — process
-            payment, arrange delivery, handle returns and honour warranties. This is necessary to
-            perform our contract with you.
+            <strong className="font-medium text-[#132c47]">
+              Processing orders
+            </strong>{" "}
+            — to process purchases, payments, deliveries, cancellations,
+            replacements and refunds.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">To manage your account</strong> —
-            authenticate you, show your order history and wishlist, and reset your password.
+            <strong className="font-medium text-[#132c47]">
+              Managing your account
+            </strong>{" "}
+            — to create your account, authenticate you and provide access to
+            your order history and wishlist.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">To support you</strong> — answer
-            questions and resolve complaints.
+            <strong className="font-medium text-[#132c47]">
+              Customer support
+            </strong>{" "}
+            — to respond to questions, enquiries, complaints and service
+            requests.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">To meet legal obligations</strong> —
-            tax and accounting records, and any obligations relating to the trade in precious
-            stones and metals.
+            <strong className="font-medium text-[#132c47]">
+              Product and service improvement
+            </strong>{" "}
+            — to understand how customers use our website and improve our
+            products, services and shopping experience.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">To protect the business</strong> —
-            detect and prevent fraud and abuse. This is our legitimate interest.
+            <strong className="font-medium text-[#132c47]">
+              Website security
+            </strong>{" "}
+            — to detect suspicious activity, prevent fraud, protect accounts
+            and maintain the security of our website.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">To send marketing</strong> — only if you
-            have opted in, or if you are an existing customer and we are telling you about similar
-            pieces. You can opt out at any time.
+            <strong className="font-medium text-[#132c47]">
+              Legal and business requirements
+            </strong>{" "}
+            — to maintain appropriate business, accounting, tax and transaction
+            records and comply with applicable legal requirements.
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Marketing
+            </strong>{" "}
+            — to send promotional communications where you have provided
+            appropriate consent or where permitted by applicable law.
           </LI>
         </UL>
       </>
     ),
   },
+
+  {
+    id: "payment-information",
+    heading: "Payment Information",
+    body: (
+      <>
+        <P>
+          Payments made through our website may be processed through third-party
+          payment providers. Your payment details may therefore be processed
+          directly by the applicable payment provider according to its own
+          privacy and security practices.
+        </P>
+
+        <P>
+          Artics Decorr does not require your complete card number, CVV or
+          banking password for normal customer support purposes. We may retain
+          transaction-related information such as payment status, transaction
+          reference and order amount where necessary for accounting, order
+          processing and customer support.
+        </P>
+
+        <Note>
+          Payment processing may involve third-party service providers. Please
+          review the applicable payment provider's privacy policy for details
+          about how it handles payment information.
+        </Note>
+      </>
+    ),
+  },
+
   {
     id: "sharing",
-    heading: "Who we share it with",
+    heading: "Who We Share Information With",
     body: (
       <>
         <P>
-          We do not sell your personal information, and we never rent or trade it. We share only
-          what is necessary, with:
+          We do not sell or rent your personal information. We may share
+          limited information with trusted service providers when it is
+          necessary to provide our products and services.
         </P>
+
         <UL>
           <LI>
-            <strong className="font-medium text-[#141414]">{COMPANY.paymentProcessor}</strong> — to
-            process and verify your payment
+            <strong className="font-medium text-[#132c47]">
+              Payment providers
+            </strong>{" "}
+            — to process and verify payments and transactions.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">Courier partners</strong> — your name,
-            delivery address and contact number, so they can deliver your parcel
+            <strong className="font-medium text-[#132c47]">
+              Delivery and logistics partners
+            </strong>{" "}
+            — to deliver your furniture or other products to the address
+            provided with your order.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">Hosting and email providers</strong> —
-            who store the site and send transactional emails on our behalf
+            <strong className="font-medium text-[#132c47]">
+              Hosting and technology providers
+            </strong>{" "}
+            — to host, maintain and secure our website and related systems.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">Professional advisers</strong> — our
-            accountants and, where necessary, our attorneys
+            <strong className="font-medium text-[#132c47]">
+              Email and communication providers
+            </strong>{" "}
+            — to send transactional emails, order updates and customer
+            communications.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">Authorities</strong> — where the law
-            requires it, or to establish or defend a legal claim
+            <strong className="font-medium text-[#132c47]">
+              Professional advisers
+            </strong>{" "}
+            — including accountants, legal advisers and other professional
+            service providers where reasonably required.
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Government or regulatory authorities
+            </strong>{" "}
+            — where disclosure is required by applicable law or necessary to
+            protect our legal rights.
           </LI>
         </UL>
+
         <P>
-          These operators may only use your information to provide their service to us, and are
-          required to keep it secure and confidential.
+          We aim to share only the information reasonably necessary for the
+          relevant service or purpose and expect our service providers to
+          handle personal information appropriately.
         </P>
       </>
     ),
   },
-  {
-    id: "cross-border",
-    heading: "Transfers outside South Africa",
-    body: (
-      <P>
-        Some of our service providers — for example hosting and email delivery — operate servers
-        outside South Africa. Where information leaves the country, we only use providers who are
-        subject to laws or binding agreements that give your information a level of protection
-        comparable to POPIA, as required by section 72.
-      </P>
-    ),
-  },
+
   {
     id: "cookies",
-    heading: "Cookies",
+    heading: "Cookies & Similar Technologies",
     body: (
       <>
-        <P>Cookies are small files stored by your browser. We use them for:</P>
+        <P>
+          Our website may use cookies and similar technologies to provide
+          essential website functionality, remember preferences and understand
+          how visitors use our website.
+        </P>
+
         <UL>
           <LI>
-            <strong className="font-medium text-[#141414]">Essential functions</strong> — keeping
-            you signed in and remembering your cart and wishlist. The site cannot work without
-            these.
+            <strong className="font-medium text-[#132c47]">
+              Essential cookies
+            </strong>{" "}
+            — required for features such as account sessions, shopping cart
+            functionality and other essential website operations.
           </LI>
+
           <LI>
-            <strong className="font-medium text-[#141414]">Analytics</strong> — understanding which
-            pages are visited so we can improve the store. This data is aggregated.
+            <strong className="font-medium text-[#132c47]">
+              Preference cookies
+            </strong>{" "}
+            — help remember certain settings and preferences.
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Analytics cookies
+            </strong>{" "}
+            — help us understand website traffic and improve the customer
+            experience.
           </LI>
         </UL>
+
         <P>
-          You can block or delete cookies in your browser settings, but blocking essential cookies
-          will stop you from signing in or checking out.
+          You can manage or disable cookies through your browser settings.
+          Please note that disabling essential cookies may affect some website
+          features.
         </P>
       </>
     ),
   },
+
   {
-    id: "retention",
-    heading: "How long we keep it",
-    body: (
-      <>
-        <UL>
-          <LI>
-            <strong className="font-medium text-[#141414]">Order and invoice records</strong> — at
-            least five years, as required by South African tax law
-          </LI>
-          <LI>
-            <strong className="font-medium text-[#141414]">Account details</strong> — until you ask
-            us to close your account
-          </LI>
-          <LI>
-            <strong className="font-medium text-[#141414]">Marketing consent</strong> — until you
-            withdraw it
-          </LI>
-          <LI>
-            <strong className="font-medium text-[#141414]">Support emails</strong> — up to three
-            years after the matter is closed
-          </LI>
-        </UL>
-        <P>
-          When information is no longer needed, we delete it or de-identify it so it can no longer
-          be linked to you.
-        </P>
-      </>
-    ),
-  },
-  {
-    id: "security",
-    heading: "How we protect it",
+    id: "data-security",
+    heading: "How We Protect Your Information",
     body: (
       <P>
-        The site runs over encrypted HTTPS connections and passwords are stored hashed, never in
-        plain text. Access to customer data is limited to staff who need it. No system is
-        completely secure, but if a breach ever affects your personal information we will notify
-        you and the Information Regulator as POPIA requires.
+        We take reasonable technical and organisational measures to protect
+        personal information against unauthorised access, loss, misuse,
+        alteration or disclosure. Our website uses encrypted HTTPS
+        communication, and account passwords are stored using appropriate
+        security measures rather than plain text.
+        <br />
+        <br />
+        Access to customer information is limited to people and service
+        providers who require it for legitimate business purposes. However, no
+        internet transmission or storage system can be guaranteed to be
+        completely secure.
       </P>
     ),
   },
+
+  {
+    id: "data-retention",
+    heading: "How Long We Keep Your Information",
+    body: (
+      <>
+        <P>
+          We retain personal information only for as long as reasonably
+          necessary for the purpose for which it was collected, including
+          providing services, maintaining business records, resolving disputes
+          and meeting applicable legal or accounting requirements.
+        </P>
+
+        <UL>
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Order and transaction records
+            </strong>{" "}
+            — retained as required for business, accounting, tax and legal
+            purposes.
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Account information
+            </strong>{" "}
+            — retained while your account remains active or where otherwise
+            required for legitimate business purposes.
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Customer communications
+            </strong>{" "}
+            — retained for as long as reasonably necessary to handle the
+            relevant enquiry, service request or dispute.
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Marketing preferences
+            </strong>{" "}
+            — retained to respect your communication preferences and opt-out
+            requests.
+          </LI>
+        </UL>
+
+        <P>
+          When personal information is no longer reasonably required, we may
+          delete it, anonymise it or securely dispose of it.
+        </P>
+      </>
+    ),
+  },
+
   {
     id: "your-rights",
-    heading: "Your rights",
+    heading: "Your Privacy Rights",
     body: (
       <>
-        <P>Under POPIA you have the right to:</P>
-        <UL>
-          <LI>Ask what personal information we hold about you, and get a copy of it</LI>
-          <LI>Ask us to correct or complete anything that is inaccurate</LI>
-          <LI>Ask us to delete or destroy information we no longer have a reason to keep</LI>
-          <LI>Object to processing based on our legitimate interests</LI>
-          <LI>Withdraw your consent to marketing at any time</LI>
-          <LI>Complain to the Information Regulator</LI>
-        </UL>
         <P>
-          Email{" "}
-          <a href={`mailto:${COMPANY.email}`} className="text-[#BF9A3A] hover:underline">
+          Depending on applicable law, you may have rights relating to the
+          personal information we hold about you, including the right to:
+        </P>
+
+        <UL>
+          <LI>Ask what personal information we hold about you.</LI>
+          <LI>Request correction of inaccurate or incomplete information.</LI>
+          <LI>
+            Request deletion of information where there is no valid reason for
+            us to retain it.
+          </LI>
+          <LI>Withdraw consent where processing is based on your consent.</LI>
+          <LI>Object to certain types of processing where applicable.</LI>
+          <LI>Opt out of promotional communications.</LI>
+        </UL>
+
+        <P>
+          To make a privacy-related request, contact us at{" "}
+          <a
+            href={`mailto:${COMPANY.email}`}
+            className="text-[#770800] hover:underline"
+          >
             {COMPANY.email}
-          </a>{" "}
-          to exercise any of these. We may ask you to verify your identity first, and will respond
-          within a reasonable time. Some records — such as tax invoices — must be kept even after
-          you close your account.
+          </a>
+          . We may need to verify your identity before processing certain
+          requests.
         </P>
       </>
     ),
   },
+
   {
     id: "marketing",
-    heading: "Marketing emails",
+    heading: "Marketing Communications",
     body: (
       <P>
-        We only send marketing where you have opted in or where you have bought from us before.
-        Every marketing email has an unsubscribe link, and you can also reply asking to be removed.
-        Transactional emails — order confirmations, dispatch notices, password resets — are part of
-        the service and will still be sent.
+        We may send promotional communications about Artics Decorr products,
+        collections, offers or updates where permitted by applicable law and
+        where you have provided the required consent.
+        <br />
+        <br />
+        You can unsubscribe from marketing emails using the unsubscribe option
+        included in the communication or by contacting us directly. Even if you
+        opt out of marketing communications, we may still send essential
+        transactional messages such as order confirmations, payment updates,
+        delivery notifications, account messages and service-related
+        communications.
       </P>
     ),
   },
+
+  {
+    id: "third-party-links",
+    heading: "Third-Party Websites",
+    body: (
+      <P>
+        Our website may contain links to third-party websites, services or
+        social media platforms. These websites operate independently and have
+        their own privacy policies and terms. Artics Decorr is not responsible
+        for the privacy practices or content of third-party websites.
+        <br />
+        <br />
+        We recommend reviewing the privacy policy of any third-party website
+        before providing personal information.
+      </P>
+    ),
+  },
+
   {
     id: "children",
-    heading: "Children",
+    heading: "Children's Privacy",
     body: (
       <P>
-        This store is intended for adults. We do not knowingly collect personal information from
-        anyone under 18 without the consent of a parent or guardian. If you believe a child has
-        given us their information, contact us and we will delete it.
+        Our website and services are intended for general customers and are not
+        specifically directed at children. We do not knowingly request or
+        collect personal information from children where such collection is
+        prohibited by applicable law.
+        <br />
+        <br />
+        If you believe that a child has provided personal information to us,
+        please contact us so that we can review and, where appropriate, remove
+        the information.
       </P>
     ),
   },
+
   {
-    id: "regulator",
-    heading: "Complaints to the Regulator",
+    id: "changes",
+    heading: "Changes to This Privacy Policy",
+    body: (
+      <P>
+        We may update this Privacy Policy from time to time to reflect changes
+        in our business, website, services, technology or applicable legal
+        requirements.
+        <br />
+        <br />
+        The updated version will be published on this page with the applicable
+        revision date. We encourage you to review this page periodically for
+        the latest information.
+        <br />
+        <br />
+        Our{" "}
+        <Link
+          href="/terms"
+          className="text-[#770800] hover:underline"
+        >
+          Terms &amp; Conditions
+        </Link>{" "}
+        should be read together with this Privacy Policy.
+      </P>
+    ),
+  },
+
+  {
+    id: "contact",
+    heading: "Contact Us",
     body: (
       <>
         <P>
-          If you believe we have handled your personal information unlawfully, please raise it with
-          us first. You also have the right to lodge a complaint with:
+          If you have any questions about this Privacy Policy, your personal
+          information or how we handle customer data, please contact Artics
+          Decorr using the details below.
         </P>
+
         <UL>
           <LI>
-            <strong className="font-medium text-[#141414]">
-              The Information Regulator (South Africa)
-            </strong>
+            <strong className="font-medium text-[#132c47]">
+              Company:
+            </strong>{" "}
+            {COMPANY.legalName}
           </LI>
-          <LI>JD House, 27 Stiemens Street, Braamfontein, Johannesburg, 2001</LI>
+
           <LI>
-            Website:{" "}
+            <strong className="font-medium text-[#132c47]">
+              Email:
+            </strong>{" "}
             <a
-              href="https://inforegulator.org.za"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#BF9A3A] hover:underline"
+              href={`mailto:${COMPANY.email}`}
+              className="text-[#770800] hover:underline"
             >
-              inforegulator.org.za
+              {COMPANY.email}
             </a>
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Phone:
+            </strong>{" "}
+            <a
+              href={`tel:${COMPANY.phoneHref}`}
+              className="text-[#770800] hover:underline"
+            >
+              {COMPANY.phone}
+            </a>
+          </LI>
+
+          <LI>
+            <strong className="font-medium text-[#132c47]">
+              Address:
+            </strong>{" "}
+            {COMPANY.address}
           </LI>
         </UL>
       </>
-    ),
-  },
-  {
-    id: "changes-privacy",
-    heading: "Changes to this policy",
-    body: (
-      <P>
-        We may update this policy as our business or the law changes. The revision date at the top
-        of the page tells you when it last changed. Material changes will be communicated by email
-        or a notice on the site. Our{" "}
-        <Link href="/terms" className="text-[#BF9A3A] hover:underline">
-          Terms &amp; Conditions
-        </Link>{" "}
-        should be read together with this policy.
-      </P>
     ),
   },
 ];
@@ -350,7 +578,7 @@ export default function PrivacyPage() {
     <LegalPage
       title="Privacy Policy"
       breadcrumb="Privacy Policy"
-      subtitle="What we collect, why we collect it, and the control you have over your personal information under POPIA."
+      subtitle="How Artics Decorr collects, uses and protects your personal information while providing our furniture, decor and online services."
       sections={SECTIONS}
     />
   );

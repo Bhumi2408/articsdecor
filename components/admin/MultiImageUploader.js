@@ -201,10 +201,10 @@ export default function MultiImageUploader({ label, values = [], onChange }) {
       </div>
 
       {values.length > 0 && (
-        <p className="mt-2 text-[12.5px] text-[#9A9A9A]">
-          {values.length} image{values.length > 1 ? "s" : ""} &middot; pehli image listings me dikhegi — arrows se order badlo.
-        </p>
-      )}
+  <p className="mt-2 text-[12.5px] text-[#9A9A9A]">
+    {values.length} image{values.length > 1 ? "s" : ""} &middot; The first image will appear in listings — use the arrows to change the order.
+  </p>
+)}
 
       {error && (
         <p role="alert" className="mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[13px] text-red-700">

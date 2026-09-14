@@ -12,7 +12,7 @@ export default function Pagination({ page, pages, buildHref }) {
           key={p}
           href={buildHref(p)}
           className={`w-9 h-9 flex items-center justify-center rounded border ${
-            p === page ? "bg-gold text-white border-gold" : "border-border hover:border-gold"
+            p === page ? "bg-[#770800] text-white border-[#770800]" : "border-border hover:border-[#770800]"
           }`}
         >
           {p}

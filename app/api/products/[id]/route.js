@@ -23,56 +23,60 @@ export async function GET(req, { params }) {
 export async function PUT(req, { params }) {
   try {
     const admin = await getCurrentAdmin();
-    if (!admin) {
-      return NextResponse.json(
-        { error: "Your session expired. Please sign in again." },
-        { status: 401 }
-      );
-    }
+    if (!admin) return NextResponse.json({ error: "Your session expired. Please sign in again." }, { status: 401 });
 
+    await connectDB();
     const { id } = await params;
     const body = await req.json();
-    await connectDB();
 
     const fieldErrors = validateProduct(body, { partial: true });
     if (Object.keys(fieldErrors).length) {
+      return NextResponse.json({ error: "Please fix the highlighted fields.", fieldErrors }, { status: 400 });
+    }
+
+    const existing = await Product.findById(id).select("hiddenFromStore").lean();
+    if (!existing) return NextResponse.json({ error: "Product not found." }, { status: 404 });
+
+    const updateData = { ...body };
+
+    const willBeHidden =
+      body.hiddenFromStore !== undefined ? body.hiddenFromStore : existing.hiddenFromStore;
+    if (willBeHidden) updateData.featured = false;   // 👈 add
+
+    if (body.description !== undefined) {
+      updateData.description = sanitizeRichText(body.description);
+    }
+    
+
+    if (body.keywords !== undefined && typeof body.keywords === "string") {
+      updateData.keywords = body.keywords
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      id,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!product) {
       return NextResponse.json(
-        { error: "Please fix the highlighted fields.", fieldErrors },
-        { status: 400 }
+        { error: "Product not found." },
+        { status: 404 }
       );
     }
 
-    // koi doosra product wahi slug to nahi le raha
-    if (body.slug) {
-      const clash = await Product.findOne({ slug: body.slug, _id: { $ne: id } })
-        .select("_id")
-        .lean();
-      if (clash) {
-        return NextResponse.json(
-          {
-            error: `Another product already uses the slug "${body.slug}".`,
-            fieldErrors: { slug: "This slug is already taken." },
-          },
-          { status: 409 }
-        );
-      }
-    }
-
-    const update = { ...body };
-    if (update.description !== undefined) update.description = sanitizeRichText(update.description);
-
-    const product = await Product.findByIdAndUpdate(id, update, {
-      new: true,
-      runValidators: true,
-    });
-    if (!product) return NextResponse.json({ error: "Product not found." }, { status: 404 });
     return NextResponse.json(product);
   } catch (err) {
     const { status, body } = toApiError(err);
     return NextResponse.json(body, { status });
   }
 }
-
 export async function DELETE(req, { params }) {
   try {
     const admin = await getCurrentAdmin();

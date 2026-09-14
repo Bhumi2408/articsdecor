@@ -4,10 +4,14 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
-/* 👇 apni image ka path change kar lena */
-const SIDE_IMAGE = "/home/hero3.jpeg";
+const SIDE_IMAGE = "/products/p5.png";
 const LOGO_SRC = "/logo.png";
+
+/* =========================================================
+   ICONS
+========================================================= */
 
 const EyeIcon = ({ open, className = "" }) => (
   <svg
@@ -15,7 +19,7 @@ const EyeIcon = ({ open, className = "" }) => (
     className={className}
     fill="none"
     stroke="currentColor"
-    strokeWidth="1.6"
+    strokeWidth="1.5"
     strokeLinecap="round"
     strokeLinejoin="round"
     aria-hidden="true"
@@ -28,35 +32,115 @@ const EyeIcon = ({ open, className = "" }) => (
     ) : (
       <>
         <path d="M4 4l16 16" />
-        <path d="M9.9 5.8A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3.4 4.1M6.4 7.9A16.7 16.7 0 0 0 2.5 12S6 18.5 12 18.5c1.3 0 2.4-.3 3.5-.7" />
+        <path d="M9.9 5.8A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3.4 4.1" />
+        <path d="M6.4 7.9A16.7 16.7 0 0 0 2.5 12S6 18.5 12 18.5c1.3 0 2.4-.3 3.5-.7" />
         <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
       </>
     )}
   </svg>
 );
 
+const UserIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="h-5 w-5"
+  >
+    <circle cx="12" cy="8" r="3.5" />
+    <path d="M5 20c.7-3.5 3.2-5.5 7-5.5s6.3 2 7 5.5" />
+  </svg>
+);
+
+const MailIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="h-5 w-5"
+  >
+    <rect x="3.5" y="5" width="17" height="14" rx="2" />
+    <path d="m4 7 8 6 8-6" />
+  </svg>
+);
+
+const LockIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="h-5 w-5"
+  >
+    <rect x="4.5" y="10" width="15" height="10" rx="2" />
+    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+  </svg>
+);
+
+const ArrowIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.7"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+  >
+    <path d="M5 12h14" />
+    <path d="m13 6 6 6-6 6" />
+  </svg>
+);
+
+/* =========================================================
+   REGISTER FORM
+========================================================= */
+
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const next = searchParams.get("next") || "/account";
 
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
+
     setSubmitting(true);
     setError("");
+
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(form),
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Registration failed");
+
+      if (!res.ok) {
+        throw new Error(data.error || "Registration failed");
+      }
+
       router.push(next);
       router.refresh();
     } catch (err) {
@@ -66,186 +150,426 @@ function RegisterForm() {
     }
   }
 
-  const inputClass =
-    "w-full rounded-lg border border-black/10 bg-white px-4 py-3.5 text-[15px] text-[#141414] outline-none transition-all placeholder:text-[#A5A5A5] focus:border-[#BF9A3A] focus:ring-2 focus:ring-[#BF9A3A]/20";
-
-  const labelClass =
-    "mb-2 block text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[#6B6B6B]";
-
   const passwordOk = form.password.length >= 8;
 
   return (
-    <div className="grid min-h-[70vh] lg:min-h-[calc(100vh-120px)] lg:grid-cols-2">
-      {/* ---------- left visual (desktop only) ---------- */}
-      <div className="relative hidden overflow-hidden lg:block">
-        <img src={SIDE_IMAGE} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/20" />
-        <div className="relative flex h-full flex-col justify-end p-12 xl:p-16">
-          <span className="text-[11.5px] font-semibold uppercase tracking-[0.16em] text-[#DBAF36]">
-            Lute Diamonds
-          </span>
-          <h2 className="mt-4 max-w-[420px] text-[34px] font-medium leading-[1.15] text-white xl:text-[42px]">
-            Begin your collection with us
-          </h2>
-          <p className="mt-4 max-w-[420px] text-[15px] leading-[1.7] text-white/70">
-            Create an account to save your favourite pieces, follow your orders and check out in
-            seconds.
-          </p>
-        </div>
-      </div>
+    <main className="bg-[#f7f8fa]">
+     <Breadcrumbs image="/products/p10.png" title="Register" items={[{ label: "Register" }]} />
+      <div className="bg-[#f7f8fa] mx-auto grid w-full max-w-[1450px] py-8 sm:py-12 lg:py-16 overflow-hidden shadow-[0_25px_80px_rgba(16,47,79,0.10)] lg:grid-cols-[48%_52%]">
 
-      {/* ---------- form ---------- */}
-      <div className="flex items-center justify-center px-5 py-14 sm:px-10 lg:py-20">
-        <div className="w-full max-w-[420px]">
-          <Link href="/" className="mb-10 inline-block lg:hidden">
-            <img src={LOGO_SRC} alt="Lute Diamonds" className="h-10 w-auto" />
-          </Link>
+        {/* =====================================================
+            LEFT IMAGE PANEL
+        ====================================================== */}
 
-          <h1 className="text-[28px] font-medium leading-tight tracking-[-0.01em] text-[#141414] sm:text-[32px]">
-            Create an Account
-          </h1>
-          <p className="mt-2 text-[15px] leading-relaxed text-[#6B6B6B]">
-            All we need is your name, email address and a password.
-          </p>
+        <div className="relative hidden min-h-[720px] overflow-hidden lg:block">
+          <img
+            src={SIDE_IMAGE}
+            alt="Artics Decorr outdoor furniture"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1500ms] hover:scale-[1.03]"
+          />
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-            <div>
-              <label htmlFor="name" className={labelClass}>
-                Full Name
-              </label>
-              <input
-                id="name"
-                required
-                autoComplete="name"
-                placeholder="Jane Doe"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className={inputClass}
-              />
+          {/* DARK BLUE OVERLAY */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071d31]/95 via-[#102f4f]/45 to-[#102f4f]/10" />
+
+          {/* DECORATIVE BORDER */}
+          <div className="absolute inset-6 border border-white/20" />
+
+          {/* CONTENT */}
+          <div className="absolute inset-x-0 bottom-0 z-10 p-10 xl:p-14">
+            <div className="mb-6 flex items-center gap-3">
+              <span className="h-px w-10 bg-[#d8b36a]" />
+
+              <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#d8b36a]">
+                Artics Decorr
+              </span>
             </div>
 
-            <div>
-              <label htmlFor="email" className={labelClass}>
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                autoComplete="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className={inputClass}
-              />
-            </div>
+            <h2 className="max-w-[500px] font-serif text-[42px] font-medium leading-[1.08] text-white xl:text-[50px]">
+              Create your
+              <br />
+              beautiful space.
+            </h2>
 
-            <div>
-              <label htmlFor="password" className={labelClass}>
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  minLength={8}
-                  autoComplete="new-password"
-                  placeholder="At least 8 characters"
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className={`${inputClass} pr-12`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-[#8A8A8A] transition-colors hover:text-[#BF9A3A]"
-                >
-                  <EyeIcon open={showPassword} className="h-5 w-5" />
-                </button>
+            <p className="mt-5 max-w-[470px] text-[15px] leading-7 text-white/70">
+              Join Artics Decorr and discover thoughtfully crafted outdoor
+              furniture designed to bring comfort, character and timeless
+              style to your space.
+            </p>
+
+            <div className="mt-8 flex items-center gap-8">
+              <div>
+                <p className="font-serif text-[25px] text-white">Premium</p>
+                <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-white/45">
+                  Outdoor Furniture
+                </p>
               </div>
 
-              <p
-                className={`mt-2 text-[12.5px] transition-colors ${
-                  form.password.length === 0
-                    ? "text-[#9A9A9A]"
-                    : passwordOk
-                    ? "text-emerald-600"
-                    : "text-[#9A9A9A]"
-                }`}
-              >
-                {passwordOk ? "Looks good." : "At least 8 characters."}
+              <span className="h-10 w-px bg-white/20" />
+
+              <div>
+                <p className="font-serif text-[25px] text-white">Designed</p>
+                <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-white/45">
+                  For Living
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* =====================================================
+            RIGHT FORM PANEL
+        ====================================================== */}
+
+        <div className="relative flex items-center justify-center px-5 py-10 sm:px-10 sm:py-14 lg:px-14 xl:px-20">
+
+          {/* TOP ACCENT */}
+          <div className="absolute left-0 right-0 top-0 h-1 bg-[#102f4f]" />
+
+          <div className="w-full max-w-[500px]">
+
+            {/* MOBILE LOGO */}
+            <Link
+              href="/"
+              className="mb-10 flex justify-center lg:hidden"
+            >
+              <img
+                src={LOGO_SRC}
+                alt="Artics Decorr"
+                className="h-11 w-auto"
+              />
+            </Link>
+
+            {/* HEADER */}
+            <div className="text-center lg:text-left">
+              <div className="mb-4 flex items-center justify-center gap-3 lg:justify-start">
+                <span className="h-px w-8 bg-[#d8b36a]" />
+
+                <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#a37b35]">
+                  Welcome to Artics Decorr
+                </span>
+
+                <span className="h-px w-8 bg-[#d8b36a] lg:hidden" />
+              </div>
+
+              <h1 className="font-serif text-[34px] font-medium leading-tight tracking-[-0.5px] text-[#102f4f] sm:text-[40px]">
+                Create an Account
+              </h1>
+
+              <p className="mx-auto mt-3 max-w-[430px] text-[14px] leading-6 text-[#777] lg:mx-0">
+                Create your account and make your next furniture experience
+                simple and effortless.
               </p>
             </div>
 
-            {error && (
-              <div
-                role="alert"
-                className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-700"
-              >
-                {error}
+            {/* FORM */}
+            <form
+              onSubmit={handleSubmit}
+              className="mt-9 space-y-5"
+            >
+
+              {/* NAME */}
+              <div>
+                <label
+                  htmlFor="name"
+                  className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#5f6871]"
+                >
+                  Full Name
+                </label>
+
+                <div className="group relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9ba2a8] transition-colors group-focus-within:text-[#102f4f]">
+                    <UserIcon />
+                  </span>
+
+                  <input
+                    id="name"
+                    required
+                    autoComplete="name"
+                    placeholder="Enter your full name"
+                    value={form.name}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        name: e.target.value,
+                      })
+                    }
+                    className="h-[54px] w-full border border-[#dfe3e7] bg-[#fafbfc] pl-12 pr-4 text-[14px] text-[#172b41] outline-none transition-all placeholder:text-[#a7adb3] focus:border-[#102f4f] focus:bg-white focus:ring-4 focus:ring-[#102f4f]/[0.06]"
+                  />
+                </div>
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#BF9A3A] py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#A8862C] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {submitting && (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+              {/* EMAIL */}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#5f6871]"
+                >
+                  Email Address
+                </label>
+
+                <div className="group relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9ba2a8] transition-colors group-focus-within:text-[#102f4f]">
+                    <MailIcon />
+                  </span>
+
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        email: e.target.value,
+                      })
+                    }
+                    className="h-[54px] w-full border border-[#dfe3e7] bg-[#fafbfc] pl-12 pr-4 text-[14px] text-[#172b41] outline-none transition-all placeholder:text-[#a7adb3] focus:border-[#102f4f] focus:bg-white focus:ring-4 focus:ring-[#102f4f]/[0.06]"
+                  />
+                </div>
+              </div>
+
+              {/* PASSWORD */}
+              <div>
+                <label
+                  htmlFor="password"
+                  className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#5f6871]"
+                >
+                  Password
+                </label>
+
+                <div className="group relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9ba2a8] transition-colors group-focus-within:text-[#102f4f]">
+                    <LockIcon />
+                  </span>
+
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    minLength={8}
+                    autoComplete="new-password"
+                    placeholder="At least 8 characters"
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        password: e.target.value,
+                      })
+                    }
+                    className="h-[54px] w-full border border-[#dfe3e7] bg-[#fafbfc] pl-12 pr-12 text-[14px] text-[#172b41] outline-none transition-all placeholder:text-[#a7adb3] focus:border-[#102f4f] focus:bg-white focus:ring-4 focus:ring-[#102f4f]/[0.06]"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPassword((v) => !v)
+                    }
+                    aria-label={
+                      showPassword
+                        ? "Hide password"
+                        : "Show password"
+                    }
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8b939a] transition-colors hover:text-[#102f4f]"
+                  >
+                    <EyeIcon
+                      open={showPassword}
+                      className="h-5 w-5"
+                    />
+                  </button>
+                </div>
+
+                <div className="mt-2 flex items-center justify-between">
+                  <p
+                    className={`text-[11.5px] ${
+                      form.password.length === 0
+                        ? "text-[#999]"
+                        : passwordOk
+                        ? "text-emerald-600"
+                        : "text-[#999]"
+                    }`}
+                  >
+                    {passwordOk
+                      ? "✓ Password looks good"
+                      : "Minimum 8 characters"}
+                  </p>
+
+                  {form.password.length > 0 && (
+                    <span className="text-[10px] uppercase tracking-[0.12em] text-[#aaa]">
+                      {form.password.length}/8+
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* ERROR */}
+              {error && (
+                <div
+                  role="alert"
+                  className="border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700"
+                >
+                  {error}
+                </div>
               )}
-              {submitting ? "Creating account..." : "Create Account"}
-            </button>
 
-            <p className="text-center text-[12.5px] leading-relaxed text-[#9A9A9A]">
-              By creating an account you agree to our{" "}
-              <Link href="/terms" className="underline underline-offset-2 hover:text-[#BF9A3A]">
-                Terms
-              </Link>{" "}
-              and{" "}
-              <Link href="/privacy" className="underline underline-offset-2 hover:text-[#BF9A3A]">
-                Privacy Policy
-              </Link>
-              .
-            </p>
-          </form>
+              {/* SUBMIT BUTTON */}
+              <button
+                type="submit"
+                disabled={submitting}
+                className="
+                  group
+                  relative
+                  flex
+                  h-[56px]
+                  w-full
+                  items-center
+                  justify-center
+                  gap-2
+                  overflow-hidden
+                  bg-[#102f4f]
+                  text-[13px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.14em]
+                  text-white
+                  transition-all
+                  duration-500
+                  hover:bg-[#0b263e]
+                  disabled:cursor-not-allowed
+                  disabled:opacity-60
+                "
+              >
+                {/* CENTER FILL EFFECT */}
+                <span
+                  aria-hidden="true"
+                  className="
+                    absolute
+                    inset-0
+                    origin-center
+                    scale-x-0
+                    bg-[#d8b36a]
+                    transition-transform
+                    duration-500
+                    ease-[cubic-bezier(0.65,0,0.35,1)]
+                    group-hover:scale-x-100
+                  "
+                />
 
-          <div className="mt-8 flex items-center gap-4">
-            <span className="h-px flex-1 bg-black/10" />
-            <span className="text-[12px] uppercase tracking-[0.1em] text-[#9A9A9A]">or</span>
-            <span className="h-px flex-1 bg-black/10" />
-          </div>
+                <span className="relative z-10 flex items-center gap-2 transition-colors duration-300 group-hover:text-[#102f4f]">
+                  {submitting && (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white group-hover:border-[#102f4f]/30 group-hover:border-t-[#102f4f]" />
+                  )}
 
-          <p className="mt-6 text-center text-[15px] text-[#6B6B6B]">
-            Already have an account?{" "}
+                  {submitting
+                    ? "Creating Account..."
+                    : "Create Account"}
+
+                  {!submitting && <ArrowIcon />}
+                </span>
+              </button>
+
+              {/* TERMS */}
+              <p className="text-center text-[11.5px] leading-5 text-[#999]">
+                By creating an account, you agree to our{" "}
+                <Link
+                  href="/terms"
+                  className="text-[#102f4f] underline underline-offset-2 transition-colors hover:text-[#a37b35]"
+                >
+                  Terms
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="/privacy"
+                  className="text-[#102f4f] underline underline-offset-2 transition-colors hover:text-[#a37b35]"
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </p>
+            </form>
+
+            {/* DIVIDER */}
+            <div className="my-8 flex items-center gap-4">
+              <span className="h-px flex-1 bg-[#e5e7e9]" />
+
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#a0a4a8]">
+                Already a member?
+              </span>
+
+              <span className="h-px flex-1 bg-[#e5e7e9]" />
+            </div>
+
+            {/* LOGIN */}
             <Link
-              href={`/account/login${next !== "/account" ? `?next=${encodeURIComponent(next)}` : ""}`}
-              className="font-medium text-[#BF9A3A] underline decoration-1 underline-offset-4 hover:text-[#A8862C]"
+              href={`/account/login${
+                next !== "/account"
+                  ? `?next=${encodeURIComponent(next)}`
+                  : ""
+              }`}
+              className="
+                group
+                flex
+                h-[54px]
+                w-full
+                items-center
+                justify-center
+                gap-2
+                border
+                border-[#102f4f]
+                text-[12px]
+                font-semibold
+                uppercase
+                tracking-[0.14em]
+                text-[#102f4f]
+                transition-all
+                duration-300
+                hover:bg-[#102f4f]
+                hover:text-white
+              "
             >
-              Sign in
+              Sign In
+              <ArrowIcon />
             </Link>
-          </p>
+
+            {/* BOTTOM BRAND */}
+            <div className="mt-8 flex items-center justify-center gap-3 text-[#b0b4b8]">
+              <span className="h-px w-8 bg-[#e5e7e9]" />
+
+              <span className="text-[10px] uppercase tracking-[0.22em]">
+                Artics Decorr
+              </span>
+
+              <span className="h-px w-8 bg-[#e5e7e9]" />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
+
+/* =========================================================
+   SKELETON
+========================================================= */
 
 function RegisterSkeleton() {
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-5">
-      <div className="w-full max-w-[420px] animate-pulse space-y-5">
-        <div className="h-8 w-56 rounded bg-black/10" />
-        <div className="h-12 w-full rounded-lg bg-black/[0.07]" />
-        <div className="h-12 w-full rounded-lg bg-black/[0.07]" />
-        <div className="h-12 w-full rounded-lg bg-black/[0.07]" />
-        <div className="h-12 w-full rounded-lg bg-black/10" />
+    <div className="flex min-h-[70vh] items-center justify-center bg-[#f7f8fa] px-5">
+      <div className="w-full max-w-[500px] animate-pulse space-y-5">
+        <div className="mx-auto h-10 w-56 bg-[#102f4f]/10" />
+        <div className="h-14 w-full bg-black/[0.05]" />
+        <div className="h-14 w-full bg-black/[0.05]" />
+        <div className="h-14 w-full bg-black/[0.05]" />
+        <div className="h-14 w-full bg-[#102f4f]/10" />
       </div>
     </div>
   );
 }
+
+/* =========================================================
+   PAGE
+========================================================= */
 
 export default function RegisterPage() {
   return (

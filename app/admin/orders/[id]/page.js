@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import Order from "@/models/Order";
-import { formatZAR } from "@/lib/format";
+import { formatINR } from "@/lib/format";
 import OrderStatusForm from "@/components/admin/OrderStatusForm";
 
 const iconProps = {
@@ -120,11 +120,11 @@ export default async function AdminOrderDetailPage({ params }) {
                   <div className="min-w-0 flex-1">
                     <p className="text-[15px] font-medium leading-snug text-[#141414]">{item.name}</p>
                     <p className="mt-1 text-[13.5px] text-[#8A8A8A]">
-                      {item.qty} &times; {formatZAR(item.price)}
+                      {item.qty} &times; {formatINR(item.price)}
                     </p>
                   </div>
                   <p className="shrink-0 text-[15px] font-medium text-[#141414]">
-                    {formatZAR(item.price * item.qty)}
+                    {formatINR(item.price * item.qty)}
                   </p>
                 </li>
               ))}
@@ -134,18 +134,18 @@ export default async function AdminOrderDetailPage({ params }) {
             <div className="space-y-2.5 border-t border-black/[0.07] bg-[#FCFAF6] px-5 py-4 text-[14.5px] sm:px-6">
               <div className="flex justify-between">
                 <span className="text-[#5A5A5A]">Subtotal</span>
-                <span className="text-[#141414]">{formatZAR(order.subtotal)}</span>
+                <span className="text-[#141414]">{formatINR(order.subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[#5A5A5A]">Shipping</span>
                 <span className={order.shippingFee ? "text-[#141414]" : "text-emerald-600"}>
-                  {order.shippingFee ? formatZAR(order.shippingFee) : "Free"}
+                  {order.shippingFee ? formatINR(order.shippingFee) : "Free"}
                 </span>
               </div>
               <div className="flex items-baseline justify-between border-t border-black/10 pt-3">
                 <span className="font-medium text-[#141414]">Total</span>
                 <span className="text-[20px] font-medium text-[#141414]">
-                  {formatZAR(order.total)}
+                  {formatINR(order.total)}
                 </span>
               </div>
             </div>
