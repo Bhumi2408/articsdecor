@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import { getCurrentUser } from "@/lib/auth";
+import { getWishlistIds } from "@/lib/wishlist";
+
+export async function GET() {
+  const ids = await getWishlistIds();
+  return NextResponse.json({ ids });
+}
 
 export async function POST(req) {
   const session = await getCurrentUser();

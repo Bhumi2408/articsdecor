@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatINR } from "@/lib/format";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
@@ -12,12 +12,22 @@ import { toast } from "sonner";
 /* mat se bahar nikalne wali motion — sab jagah yahi timing */
 const REVEAL = "duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, initialWishlisted }) {
   const addItem = useCartStore((s) => s.addItem);
   const wishlisted = useWishlistStore((s) => s.isWishlisted(product._id));
   const toggleWishlistStore = useWishlistStore((s) => s.toggle);
+  const seedWishlist = useWishlistStore((s) => s.seed);
 
   const [pending, setPending] = useState(false);
+
+  // Seed the shared store with the server-known state for this product so
+  // the heart is correct on first paint, before the global sync in Header
+  // (or a toggle elsewhere) has a chance to run.
+  useEffect(() => {
+    if (typeof initialWishlisted === "boolean") {
+      seedWishlist(product._id, initialWishlisted);
+    }
+  }, [product._id, initialWishlisted, seedWishlist]);
 
   async function toggleWishlist(e) {
     e.preventDefault();

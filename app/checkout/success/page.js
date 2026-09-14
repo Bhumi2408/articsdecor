@@ -65,7 +65,7 @@ export default async function CheckoutSuccessPage({ searchParams }) {
                 {" "}
                 {isPaid
                   ? "Your payment has been confirmed."
-                  : "We're confirming your payment with PayFast — this can take a minute."}
+                  : "We're confirming your payment — this can take a minute."}
               </p>
 
               {/* Order Card */}
@@ -171,7 +171,7 @@ export default async function CheckoutSuccessPage({ searchParams }) {
 
                     <p className="text-xs leading-5 text-[#132c47]/55">
                       Your order has been received. Payment verification
-                      through PayFast may take a short while. Your payment
+                      may take a short while. Your payment
                       status will update once confirmation is received.
                     </p>
                   </div>

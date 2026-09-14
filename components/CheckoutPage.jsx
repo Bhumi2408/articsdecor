@@ -1,10 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
 import { formatINR } from "@/lib/format";
 import Breadcrumbs from "@/components/Breadcrumbs";
+
+function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if (typeof window !== "undefined" && window.Razorpay) return resolve(true);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
 
 const initialForm = {
   fullName: "",
@@ -18,6 +30,7 @@ const initialForm = {
 };
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const items = useCartStore((s) => s.items);
   const clear = useCartStore((s) => s.clear);
 
@@ -25,17 +38,8 @@ export default function CheckoutPage() {
   const [form, setForm] = useState(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [payfast, setPayfast] = useState(null);
-
-  const formRef = useRef(null);
 
   useEffect(() => setMounted(true), []);
-
-  useEffect(() => {
-    if (payfast && formRef.current) {
-      formRef.current.submit();
-    }
-  }, [payfast]);
 
   if (!mounted) return null;
 
@@ -75,13 +79,18 @@ export default function CheckoutPage() {
 
       const order = await orderRes.json();
 
+      if (orderRes.status === 401) {
+        router.push("/account/login?next=/checkout");
+        return;
+      }
+
       if (!orderRes.ok) {
         throw new Error(
           order.error || "Could not place order"
         );
       }
 
-      const payRes = await fetch("/api/payfast/initiate", {
+      const payRes = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,8 +108,70 @@ export default function CheckoutPage() {
         );
       }
 
-      clear();
-      setPayfast(payData);
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        throw new Error(
+          "Could not load Razorpay checkout. Please check your connection."
+        );
+      }
+
+      const rzp = new window.Razorpay({
+        key: payData.keyId,
+        amount: payData.amount,
+        currency: payData.currency,
+        name: "Artics Decorr",
+        description: `Order ${payData.orderNumber}`,
+        order_id: payData.razorpayOrderId,
+        prefill: {
+          name: payData.name,
+          email: payData.email,
+          contact: payData.phone,
+        },
+        theme: { color: "#770800" },
+        handler: async function (response) {
+          try {
+            const verifyRes = await fetch("/api/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                orderNumber: payData.orderNumber,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (!verifyRes.ok) {
+              throw new Error(
+                verifyData.error || "Payment verification failed"
+              );
+            }
+
+            clear();
+            router.push(`/checkout/success?order=${payData.orderNumber}`);
+          } catch (err) {
+            setError(err.message);
+            setSubmitting(false);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setSubmitting(false);
+            setError("Payment was cancelled. You can try again.");
+          },
+        },
+      });
+
+      rzp.on("payment.failed", function (resp) {
+        setError(
+          resp.error?.description || "Payment failed. Please try again."
+        );
+        setSubmitting(false);
+      });
+
+      rzp.open();
     } catch (err) {
       setError(err.message);
       setSubmitting(false);
@@ -108,7 +179,7 @@ export default function CheckoutPage() {
   }
 
   /* Empty cart */
-  if (items.length === 0 && !payfast) {
+  if (items.length === 0) {
     return (
       <main className=" bg-[#f5f3ee] text-[#132c47]">
         
@@ -393,8 +464,8 @@ export default function CheckoutPage() {
               >
                 <span>
                   {submitting
-                    ? "Redirecting to PayFast..."
-                    : "Pay with PayFast"}
+                    ? "Opening Razorpay..."
+                    : "Pay with Razorpay"}
                 </span>
 
                 {!submitting && (
@@ -405,7 +476,7 @@ export default function CheckoutPage() {
               </button>
 
               <p className="mt-4 text-center text-[9px] uppercase tracking-[0.2em] text-[#132c47]/30">
-                You will be redirected to PayFast to complete payment
+                Secure payment powered by Razorpay
               </p>
             </div>
           </form>
@@ -524,27 +595,6 @@ export default function CheckoutPage() {
           </aside>
         </div>
       </section>
-
-      {/* PayFast Redirect Form */}
-      {payfast && (
-        <form
-          ref={formRef}
-          action={payfast.actionUrl}
-          method="POST"
-          className="hidden"
-        >
-          {Object.entries(payfast.fields).map(
-            ([key, value]) => (
-              <input
-                key={key}
-                type="hidden"
-                name={key}
-                value={value}
-              />
-            )
-          )}
-        </form>
-      )}
     </main>
   );
 }

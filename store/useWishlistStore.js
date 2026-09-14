@@ -8,6 +8,19 @@ export const useWishlistStore = create(
       wishlistIds: [],
       isWishlisted: (productId) => get().wishlistIds.includes(productId),
       setWishlistIds: (ids) => set({ wishlistIds: ids }),
+      // Reconciles a single product's known server-side state into the
+      // store without clobbering ids for other products that haven't
+      // loaded yet (unlike setWishlistIds, which replaces the whole list).
+      seed: (productId, inWishlist) => {
+        const current = get().wishlistIds;
+        const has = current.includes(productId);
+        if (has === inWishlist) return;
+        set({
+          wishlistIds: inWishlist
+            ? [...current, productId]
+            : current.filter((id) => id !== productId),
+        });
+      },
       toggle: (productId) => {
         const current = get().wishlistIds;
         const exists = current.includes(productId);

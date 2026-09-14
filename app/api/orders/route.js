@@ -18,6 +18,11 @@ export async function POST(req) {
     return NextResponse.json({ error: "Shipping details are required" }, { status: 400 });
   }
 
+  const session = await getCurrentUser();
+  if (!session) {
+    return NextResponse.json({ error: "Please sign in to place an order" }, { status: 401 });
+  }
+
   await connectDB();
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
@@ -26,11 +31,9 @@ export async function POST(req) {
   const shippingFee = 0;
   const total = subtotal;
 
-  const session = await getCurrentUser();
-
   const order = await Order.create({
     orderNumber: generateOrderNumber(),
-    user: session?.sub || null,
+    user: session.sub,
     items,
     shippingAddress,
     subtotal,

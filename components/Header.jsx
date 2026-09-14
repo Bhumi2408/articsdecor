@@ -121,6 +121,7 @@ export default function Header({ logoSrc = LOGO_SRC, onSearch }) {
   const searchInput = useRef(null);
   const cartItems = useCartStore((s) => s.items);
   const wishlistIds = useWishlistStore((s) => s.wishlistIds);
+  const setWishlistIds = useWishlistStore((s) => s.setWishlistIds);
 
   const cartCount = cartItems.reduce(
     (total, item) => total + (item.qty || 1),
@@ -200,6 +201,24 @@ export default function Header({ logoSrc = LOGO_SRC, onSearch }) {
 }, []);
 
   useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+  // Reconcile the persisted (localStorage) wishlist with the server's
+  // truth on load — the local store can otherwise go stale across
+  // devices/browsers, after login/logout, or from edits made elsewhere.
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch("/api/wishlist", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : { ids: [] }))
+      .then((data) => {
+        if (!cancelled) setWishlistIds(Array.isArray(data.ids) ? data.ids : []);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setWishlistIds]);
 
 const productCategories = categories.map((category) => ({
   label: category.name,

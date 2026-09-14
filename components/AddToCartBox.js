@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
 
 /* Match the toast library used in layout.js — see ProductForm for the note */
 import { toast } from "sonner";
@@ -23,13 +24,23 @@ const HeartIcon = ({ filled, ...p }) => (
   </svg>
 );
 
-export default function AddToCartBox({ product, initialWishlisted = false }) {
+export default function AddToCartBox({ product, initialWishlisted }) {
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
+  const wishlisted = useWishlistStore((s) => s.isWishlisted(product._id));
+  const toggleWishlistStore = useWishlistStore((s) => s.toggle);
+  const seedWishlist = useWishlistStore((s) => s.seed);
 
   const [qty, setQty] = useState(1);
-  const [wishlisted, setWishlisted] = useState(initialWishlisted);
   const [pending, setPending] = useState(false);
+
+  // Seed the shared store with the server-known state for this product so
+  // the button is correct on first paint, same as ProductCard.
+  useEffect(() => {
+    if (typeof initialWishlisted === "boolean") {
+      seedWishlist(product._id, initialWishlisted);
+    }
+  }, [product._id, initialWishlisted, seedWishlist]);
 
   const inStock = product.stock > 0;
   const max = Math.max(1, product.stock || 1);
@@ -54,6 +65,7 @@ export default function AddToCartBox({ product, initialWishlisted = false }) {
   async function toggleWishlist() {
     if (pending) return;
     setPending(true);
+    toggleWishlistStore(product._id);
 
     try {
       const res = await fetch("/api/wishlist", {
@@ -63,19 +75,21 @@ export default function AddToCartBox({ product, initialWishlisted = false }) {
       });
 
       if (res.status === 401) {
+        toggleWishlistStore(product._id);
         router.push("/account/login?next=/wishlist");
         return;
       }
 
       if (!res.ok) {
+        toggleWishlistStore(product._id);
         toast.error("Could not update your wishlist.");
         return;
       }
 
       const data = await res.json();
-      setWishlisted(data.inWishlist);
       toast.success(data.inWishlist ? "Saved to wishlist" : "Removed from wishlist");
     } catch {
+      toggleWishlistStore(product._id);
       toast.error("Could not reach the server. Check your connection.");
     } finally {
       setPending(false);
