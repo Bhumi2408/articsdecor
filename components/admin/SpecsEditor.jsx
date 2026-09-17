@@ -39,15 +39,16 @@ const DownIcon = (p) => (
    same handful of labels on every product. */
 const PRESETS = [
   "Material",
-  "Frame",
+  "Size",
   "Dimensions",
+  "Brand",
+  "Country of Origin",
+  "Model No.",
+  "Usage / Application",
+  "Color",
+  "Set Contain",
+  "Shape",
   "Seating Capacity",
-  "Weight",
-  "Colour / Finish",
-  "Cushion Fabric",
-  "Weather Resistance",
-  "Warranty",
-  "Care Instructions",
 ];
 
 const inputClass =

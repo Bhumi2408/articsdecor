@@ -3,24 +3,11 @@
 import Link from "next/link";
 import ProductCard from "./ProductCard";
 
-export default function BestSellerSection({ products = [] }) {
-  /*
-   * Sirf Featured products homepage par show honge.
-   *
-   * hiddenFromStore true hone par product direct URL se accessible
-   * rahega, lekin homepage par nahi dikhega.
-   */
+export default function BestSellerSection({ products = [], limit = 10 }) {
   const bestSellingProducts = products
-    .filter(
-      (product) =>
-        product.featured === true &&
-        product.hiddenFromStore !== true
-    )
-    .slice(0, 10);
-
-  /*
-   * Agar koi Featured product nahi hai to section hi hide rahega.
-   */
+    .filter((product) => product.hiddenFromStore !== true)
+    .slice(0, limit);
+console.log("PRODUCTS FETCHED:", products.length);
   if (!bestSellingProducts.length) {
     return null;
   }
@@ -28,7 +15,6 @@ export default function BestSellerSection({ products = [] }) {
   return (
     <section className="w-full bg-white px-5 py-10 sm:px-8 md:px-10 lg:px-14 xl:px-16">
       <div className="mx-auto max-w-[1700px]">
-
         {/* HEADER */}
         <div className="mb-12 text-center">
           <span className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.3em] text-[#8b5e3c]">
@@ -53,11 +39,8 @@ export default function BestSellerSection({ products = [] }) {
 
         {/* PRODUCTS */}
         <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-          {bestSellingProducts.map((product) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-            />
+          {bestSellingProducts.map((product, index) => (
+            <ProductCard key={product._id || index} product={product} />
           ))}
         </div>
 
@@ -65,61 +48,22 @@ export default function BestSellerSection({ products = [] }) {
         <div className="mt-14 flex justify-center">
           <Link
             href="/products"
-            className="
-              group/cta
-              relative
-              inline-flex
-              items-center
-              gap-3
-              overflow-hidden
-              border
-              border-[#102f4f]
-              px-8
-              py-3.5
-              text-xs
-              font-semibold
-              uppercase
-              tracking-[0.16em]
-              text-[#102f4f]
-              transition-colors
-              duration-300
-            "
+            className="group/cta relative inline-flex items-center gap-3 overflow-hidden border border-[#102f4f] px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#102f4f] transition-colors duration-300"
           >
             <span
               aria-hidden="true"
-              className="
-                absolute
-                inset-0
-                origin-center
-                scale-x-0
-                bg-[#102f4f]
-                transition-transform
-                duration-500
-                ease-[cubic-bezier(0.65,0,0.35,1)]
-                group-hover/cta:scale-x-100
-              "
+              className="absolute inset-0 origin-center scale-x-0 bg-[#102f4f] transition-transform duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover/cta:scale-x-100"
             />
 
             <span className="relative z-10 transition-colors duration-300 group-hover/cta:text-white">
               View All Products
             </span>
 
-            <span
-              className="
-                relative
-                z-10
-                text-base
-                transition-all
-                duration-300
-                group-hover/cta:translate-x-1
-                group-hover/cta:text-white
-              "
-            >
-              →
+            <span className="relative z-10 text-base transition-all duration-300 group-hover/cta:translate-x-1 group-hover/cta:text-white">
+              &rarr;
             </span>
           </Link>
         </div>
-
       </div>
     </section>
   );

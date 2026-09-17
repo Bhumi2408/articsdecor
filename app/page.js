@@ -24,8 +24,8 @@ export default async function HomePage() {
 
   const [categories, featured, latest] = await Promise.all([
     Category.find({ parent: null }).limit(4).lean(),
-    Product.find({ featured: true }).populate("category", "name slug").limit(8).lean(),
-    Product.find().sort({ createdAt: -1 }).populate("category", "name slug").limit(8).lean(),
+    Product.find({ featured: true }).populate("category", "name slug").limit(12).lean(),
+    Product.find().sort({ createdAt: -1 }).populate("category", "name slug").limit(12).lean(),
   ]);
 
   const wishlistIds = await getWishlistIds();
