@@ -77,7 +77,9 @@ export default async function WishlistPage() {
     })
     .lean();
 
-  const products = toPlain(user?.wishlist || []);
+  // A wishlisted product can be deleted later, leaving a populate() result
+  // of `null` in its place — filter those out before rendering.
+  const products = toPlain((user?.wishlist || []).filter(Boolean));
 
   return (
     <main className="min-h-screen bg-[#f5f3ee] text-[#132c47] ">

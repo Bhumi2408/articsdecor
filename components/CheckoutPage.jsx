@@ -1,22 +1,62 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import QRCode from "qrcode";
 import { useCartStore } from "@/store/useCartStore";
 import { formatINR } from "@/lib/format";
+import { buildUpiLink, UPI_ID } from "@/lib/upi";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
-function loadRazorpayScript() {
-  return new Promise((resolve) => {
-    if (typeof window !== "undefined" && window.Razorpay) return resolve(true);
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^[6-9]\d{9}$/;
+const POSTAL_CODE_RE = /^\d{6}$/;
+
+function validateCheckoutForm(form) {
+  const errors = {};
+
+  if (!form.fullName.trim()) errors.fullName = "Full name is required.";
+
+  if (!form.email.trim()) {
+    errors.email = "Email address is required.";
+  } else if (!EMAIL_RE.test(form.email.trim())) {
+    errors.email = "Enter a valid email address.";
+  }
+
+  const phoneDigits = form.phone.replace(/\D/g, "").slice(-10);
+  if (!form.phone.trim()) {
+    errors.phone = "Phone number is required.";
+  } else if (!PHONE_RE.test(phoneDigits)) {
+    errors.phone = "Enter a valid 10-digit mobile number.";
+  }
+
+  if (!form.address.trim()) errors.address = "Street address is required.";
+  if (!form.city.trim()) errors.city = "City is required.";
+  if (!form.province.trim()) errors.province = "Province is required.";
+
+  if (!form.postalCode.trim()) {
+    errors.postalCode = "Postal code is required.";
+  } else if (!POSTAL_CODE_RE.test(form.postalCode.trim())) {
+    errors.postalCode = "Enter a valid 6-digit postal code.";
+  }
+
+  if (!form.country.trim()) errors.country = "Country is required.";
+
+  return errors;
 }
+
+// --- Razorpay (disabled for now — kept for future re-enable) ---
+// function loadRazorpayScript() {
+//   return new Promise((resolve) => {
+//     if (typeof window !== "undefined" && window.Razorpay) return resolve(true);
+//     const script = document.createElement("script");
+//     script.src = "https://checkout.razorpay.com/v1/checkout.js";
+//     script.onload = () => resolve(true);
+//     script.onerror = () => resolve(false);
+//     document.body.appendChild(script);
+//   });
+// }
 
 const initialForm = {
   fullName: "",
@@ -36,10 +76,66 @@ export default function CheckoutPage() {
 
   const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState(initialForm);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [upiPayment, setUpiPayment] = useState(null); // { orderId, orderNumber, amount, link, qrDataUrl }
+  const [confirmingPayment, setConfirmingPayment] = useState(false);
+  const [cancellingPayment, setCancellingPayment] = useState(false);
+  const hiddenAtRef = useRef(null);
 
   useEffect(() => setMounted(true), []);
+
+  // Once the customer is sent to their UPI app, the browser tab is
+  // backgrounded. We treat coming back to the tab as "they attempted the
+  // payment" and move the order forward — it stays "pending" until an admin
+  // verifies the actual UPI/bank statement and marks it paid.
+  useEffect(() => {
+    if (!upiPayment) return;
+
+    async function finalizeUpiOrder() {
+      if (confirmingPayment || cancellingPayment) return;
+      setConfirmingPayment(true);
+      setError("");
+
+      try {
+        const res = await fetch("/api/upi/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId: upiPayment.orderId }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Could not confirm payment");
+
+        clear();
+        router.push(`/checkout/success?order=${upiPayment.orderNumber}`);
+      } catch (err) {
+        setError(err.message);
+        setConfirmingPayment(false);
+      }
+    }
+
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        hiddenAtRef.current = Date.now();
+        return;
+      }
+
+      const wasHiddenAt = hiddenAtRef.current;
+      hiddenAtRef.current = null;
+
+      // Ignore instant tab switches; only treat a real trip to another app
+      // (a second or more) as a payment attempt.
+      if (wasHiddenAt && Date.now() - wasHiddenAt > 1000) {
+        finalizeUpiOrder();
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [upiPayment]);
 
   if (!mounted) return null;
 
@@ -55,6 +151,13 @@ export default function CheckoutPage() {
     e.preventDefault();
 
     if (items.length === 0) return;
+
+    const errors = validateCheckoutForm(form);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      setError("Please fix the highlighted fields before continuing.");
+      return;
+    }
 
     setSubmitting(true);
     setError("");
@@ -90,91 +193,109 @@ export default function CheckoutPage() {
         );
       }
 
-      const payRes = await fetch("/api/razorpay/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          orderId: order._id,
-        }),
+      // --- Razorpay (disabled for now — kept for future re-enable) ---
+      // const payRes = await fetch("/api/razorpay/create-order", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ orderId: order._id }),
+      // });
+      // const payData = await payRes.json();
+      // if (!payRes.ok) throw new Error(payData.error || "Could not start payment");
+      // const scriptLoaded = await loadRazorpayScript();
+      // if (!scriptLoaded) throw new Error("Could not load Razorpay checkout. Please check your connection.");
+      // const rzp = new window.Razorpay({
+      //   key: payData.keyId,
+      //   amount: payData.amount,
+      //   currency: payData.currency,
+      //   name: "Artics Decorr",
+      //   description: `Order ${payData.orderNumber}`,
+      //   order_id: payData.razorpayOrderId,
+      //   prefill: { name: payData.name, email: payData.email, contact: payData.phone },
+      //   theme: { color: "#770800" },
+      //   handler: async function (response) {
+      //     try {
+      //       const verifyRes = await fetch("/api/razorpay/verify", {
+      //         method: "POST",
+      //         headers: { "Content-Type": "application/json" },
+      //         body: JSON.stringify({
+      //           razorpay_order_id: response.razorpay_order_id,
+      //           razorpay_payment_id: response.razorpay_payment_id,
+      //           razorpay_signature: response.razorpay_signature,
+      //           orderNumber: payData.orderNumber,
+      //         }),
+      //       });
+      //       const verifyData = await verifyRes.json();
+      //       if (!verifyRes.ok) throw new Error(verifyData.error || "Payment verification failed");
+      //       clear();
+      //       router.push(`/checkout/success?order=${payData.orderNumber}`);
+      //     } catch (err) {
+      //       setError(err.message);
+      //       setSubmitting(false);
+      //     }
+      //   },
+      //   modal: {
+      //     ondismiss: function () {
+      //       setSubmitting(false);
+      //       setError("Payment was cancelled. You can try again.");
+      //     },
+      //   },
+      // });
+      // rzp.on("payment.failed", function (resp) {
+      //   setError(resp.error?.description || "Payment failed. Please try again.");
+      //   setSubmitting(false);
+      // });
+      // rzp.open();
+
+      // --- UPI payment ---
+      const upiLink = buildUpiLink({
+        amount: order.total,
+        note: `Order ${order.orderNumber}`,
+        txnRef: order.orderNumber,
       });
 
-      const payData = await payRes.json();
+      const qrDataUrl = await QRCode.toDataURL(upiLink, {
+        width: 260,
+        margin: 1,
+        color: { dark: "#132c47", light: "#ffffff" },
+      });
 
-      if (!payRes.ok) {
-        throw new Error(
-          payData.error || "Could not start payment"
-        );
+      setUpiPayment({
+        orderId: order._id,
+        orderNumber: order.orderNumber,
+        amount: order.total,
+        link: upiLink,
+        qrDataUrl,
+      });
+
+      // Send the customer straight to their UPI app (GPay, PhonePe, Paytm,
+      // etc.) with the amount pre-filled. On desktop, where no app is
+      // registered for the upi:// scheme, this is a no-op and the QR code
+      // shown in the modal is used instead.
+      if (typeof window !== "undefined") {
+        window.location.href = upiLink;
       }
 
-      const scriptLoaded = await loadRazorpayScript();
-      if (!scriptLoaded) {
-        throw new Error(
-          "Could not load Razorpay checkout. Please check your connection."
-        );
-      }
-
-      const rzp = new window.Razorpay({
-        key: payData.keyId,
-        amount: payData.amount,
-        currency: payData.currency,
-        name: "Artics Decorr",
-        description: `Order ${payData.orderNumber}`,
-        order_id: payData.razorpayOrderId,
-        prefill: {
-          name: payData.name,
-          email: payData.email,
-          contact: payData.phone,
-        },
-        theme: { color: "#770800" },
-        handler: async function (response) {
-          try {
-            const verifyRes = await fetch("/api/razorpay/verify", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                orderNumber: payData.orderNumber,
-              }),
-            });
-
-            const verifyData = await verifyRes.json();
-
-            if (!verifyRes.ok) {
-              throw new Error(
-                verifyData.error || "Payment verification failed"
-              );
-            }
-
-            clear();
-            router.push(`/checkout/success?order=${payData.orderNumber}`);
-          } catch (err) {
-            setError(err.message);
-            setSubmitting(false);
-          }
-        },
-        modal: {
-          ondismiss: function () {
-            setSubmitting(false);
-            setError("Payment was cancelled. You can try again.");
-          },
-        },
-      });
-
-      rzp.on("payment.failed", function (resp) {
-        setError(
-          resp.error?.description || "Payment failed. Please try again."
-        );
-        setSubmitting(false);
-      });
-
-      rzp.open();
+      setSubmitting(false);
     } catch (err) {
       setError(err.message);
       setSubmitting(false);
+    }
+  }
+
+  async function handleCancelPayment() {
+    if (!upiPayment) return;
+    setCancellingPayment(true);
+    setError("");
+
+    try {
+      await fetch(`/api/orders/${upiPayment.orderId}`, { method: "DELETE" });
+    } catch {
+      // Ignore — worst case an unpaid, orphaned order is left behind.
+    } finally {
+      // Cart is left untouched so the items remain for a retry.
+      setUpiPayment(null);
+      setSubmitting(false);
+      setCancellingPayment(false);
     }
   }
 
@@ -327,12 +448,11 @@ export default function CheckoutPage() {
                   <Field
                     label="Full Name"
                     value={form.fullName}
-                    onChange={(v) =>
-                      setForm({
-                        ...form,
-                        fullName: v,
-                      })
-                    }
+                    onChange={(v) => {
+                      setForm({ ...form, fullName: v });
+                      setFieldErrors({ ...fieldErrors, fullName: "" });
+                    }}
+                    error={fieldErrors.fullName}
                     required
                   />
 
@@ -340,35 +460,36 @@ export default function CheckoutPage() {
                     label="Email Address"
                     type="email"
                     value={form.email}
-                    onChange={(v) =>
-                      setForm({
-                        ...form,
-                        email: v,
-                      })
-                    }
+                    onChange={(v) => {
+                      setForm({ ...form, email: v });
+                      setFieldErrors({ ...fieldErrors, email: "" });
+                    }}
+                    error={fieldErrors.email}
                     required
                   />
 
                   <Field
                     label="Phone Number"
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
                     value={form.phone}
-                    onChange={(v) =>
-                      setForm({
-                        ...form,
-                        phone: v,
-                      })
-                    }
+                    onChange={(v) => {
+                      setForm({ ...form, phone: v });
+                      setFieldErrors({ ...fieldErrors, phone: "" });
+                    }}
+                    error={fieldErrors.phone}
+                    required
                   />
 
                   <Field
                     label="Country"
                     value={form.country}
-                    onChange={(v) =>
-                      setForm({
-                        ...form,
-                        country: v,
-                      })
-                    }
+                    onChange={(v) => {
+                      setForm({ ...form, country: v });
+                      setFieldErrors({ ...fieldErrors, country: "" });
+                    }}
+                    error={fieldErrors.country}
                     required
                   />
                 </div>
@@ -391,12 +512,11 @@ export default function CheckoutPage() {
                   <Field
                     label="Street Address"
                     value={form.address}
-                    onChange={(v) =>
-                      setForm({
-                        ...form,
-                        address: v,
-                      })
-                    }
+                    onChange={(v) => {
+                      setForm({ ...form, address: v });
+                      setFieldErrors({ ...fieldErrors, address: "" });
+                    }}
+                    error={fieldErrors.address}
                     required
                   />
 
@@ -404,36 +524,35 @@ export default function CheckoutPage() {
                     <Field
                       label="City"
                       value={form.city}
-                      onChange={(v) =>
-                        setForm({
-                          ...form,
-                          city: v,
-                        })
-                      }
+                      onChange={(v) => {
+                        setForm({ ...form, city: v });
+                        setFieldErrors({ ...fieldErrors, city: "" });
+                      }}
+                      error={fieldErrors.city}
                       required
                     />
 
                     <Field
                       label="Province"
                       value={form.province}
-                      onChange={(v) =>
-                        setForm({
-                          ...form,
-                          province: v,
-                        })
-                      }
+                      onChange={(v) => {
+                        setForm({ ...form, province: v });
+                        setFieldErrors({ ...fieldErrors, province: "" });
+                      }}
+                      error={fieldErrors.province}
                       required
                     />
 
                     <Field
                       label="Postal Code"
+                      inputMode="numeric"
+                      maxLength={6}
                       value={form.postalCode}
-                      onChange={(v) =>
-                        setForm({
-                          ...form,
-                          postalCode: v,
-                        })
-                      }
+                      onChange={(v) => {
+                        setForm({ ...form, postalCode: v });
+                        setFieldErrors({ ...fieldErrors, postalCode: "" });
+                      }}
+                      error={fieldErrors.postalCode}
                       required
                     />
                   </div>
@@ -464,8 +583,8 @@ export default function CheckoutPage() {
               >
                 <span>
                   {submitting
-                    ? "Opening Razorpay..."
-                    : "Pay with Razorpay"}
+                    ? "Preparing UPI Payment..."
+                    : `Pay ${formatINR(total)} via UPI`}
                 </span>
 
                 {!submitting && (
@@ -476,7 +595,7 @@ export default function CheckoutPage() {
               </button>
 
               <p className="mt-4 text-center text-[9px] uppercase tracking-[0.2em] text-[#132c47]/30">
-                Secure payment powered by Razorpay
+                Secure UPI payment · {UPI_ID}
               </p>
             </div>
           </form>
@@ -595,7 +714,95 @@ export default function CheckoutPage() {
           </aside>
         </div>
       </section>
+
+      {upiPayment && (
+        <UpiPaymentModal
+          payment={upiPayment}
+          confirming={confirmingPayment}
+          cancelling={cancellingPayment}
+          error={error}
+          onCancel={handleCancelPayment}
+        />
+      )}
     </main>
+  );
+}
+
+/* =========================================================
+   UPI PAYMENT MODAL
+========================================================= */
+
+function UpiPaymentModal({ payment, confirming, cancelling, error, onCancel }) {
+  const busy = confirming || cancelling;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#132c47]/60 px-4 backdrop-blur-sm">
+      <div className="relative w-full max-w-md bg-[#f5f3ee] p-7 sm:p-8">
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-[#770800]">
+          Scan &amp; Pay
+        </p>
+
+        <h2 className="font-serif text-3xl text-[#132c47]">
+          Pay via <span className="italic text-[#770800]">UPI.</span>
+        </h2>
+
+        <p className="mt-3 text-sm text-[#132c47]/55">
+          We have opened your UPI app to complete this payment. On a
+          computer, scan the QR code below with any UPI app on your phone
+          instead.
+        </p>
+
+        <div className="my-6 flex justify-center">
+          <img
+            src={payment.qrDataUrl}
+            alt="UPI QR code"
+            className="h-56 w-56 border border-[#132c47]/10 bg-white p-2"
+          />
+        </div>
+
+        <div className="space-y-1 text-center">
+          <p className="font-serif text-2xl text-[#132c47]">
+            {formatINR(payment.amount)}
+          </p>
+          <p className="text-xs text-[#132c47]/45">
+            Order {payment.orderNumber} · Pay to {UPI_ID}
+          </p>
+        </div>
+
+        {error && (
+          <div className="mt-5 flex items-start gap-3 border border-[#770800]/15 bg-[#770800]/[0.04] px-4 py-4">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#770800] text-[10px] text-white">
+              !
+            </span>
+            <p className="text-xs leading-5 text-[#770800]">{error}</p>
+          </div>
+        )}
+
+        <div className="mt-6 flex items-center justify-center gap-2 text-xs text-[#132c47]/50">
+          {confirming ? (
+            <>
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#132c47]/20 border-t-[#770800]" />
+              Confirming your order...
+            </>
+          ) : (
+            "Waiting for you to complete the payment"
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={busy}
+          className="mt-4 flex h-13 w-full items-center justify-center gap-3 border border-[#132c47]/15 px-6 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#132c47]/60 transition-all duration-300 hover:border-[#132c47]/30 hover:text-[#132c47] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {cancelling ? "Cancelling..." : "Cancel Payment"}
+        </button>
+
+        <p className="mt-4 text-center text-[9px] uppercase tracking-[0.2em] text-[#132c47]/30">
+          Your order stays pending until we verify the payment
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -610,6 +817,9 @@ function Field({
   onChange,
   type = "text",
   required = false,
+  error = "",
+  inputMode,
+  maxLength,
 }) {
   return (
     <div>
@@ -623,10 +833,21 @@ function Field({
       <input
         type={type}
         required={required}
+        inputMode={inputMode}
+        maxLength={maxLength}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-13 w-full rounded-none border border-[#132c47]/12 bg-white px-4 py-3 text-sm text-[#132c47] outline-none transition placeholder:text-[#132c47]/20 hover:border-[#132c47]/25 focus:border-[#770800]/50 focus:ring-1 focus:ring-[#770800]/10"
+        aria-invalid={Boolean(error)}
+        className={`h-13 w-full rounded-none border bg-white px-4 py-3 text-sm text-[#132c47] outline-none transition placeholder:text-[#132c47]/20 focus:ring-1 ${
+          error
+            ? "border-[#770800]/60 focus:border-[#770800] focus:ring-[#770800]/15"
+            : "border-[#132c47]/12 hover:border-[#132c47]/25 focus:border-[#770800]/50 focus:ring-[#770800]/10"
+        }`}
       />
+
+      {error && (
+        <p className="mt-1.5 text-[11px] leading-4 text-[#770800]">{error}</p>
+      )}
     </div>
   );
 }
