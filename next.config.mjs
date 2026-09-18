@@ -29,13 +29,19 @@ const nextConfig = {
           { key: "Cache-Control", value: "no-store, no-cache, must-revalidate, max-age=0" },
         ],
       },
-      {
-        source: "/uploads/:path*",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-        ],
-      },
     ];
+  },
+
+  // Serve /uploads/* through the /api/serve-upload route instead of Next's
+  // built-in public-folder static file handling (see that route's comment
+  // for why) — existing image URLs already stored in the database keep
+  // working unchanged since this rewrite is transparent to the client.
+  async rewrites() {
+    return {
+      beforeFiles: [
+        { source: "/uploads/:filename", destination: "/api/serve-upload/:filename" },
+      ],
+    };
   },
 };
 
