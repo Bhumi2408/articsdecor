@@ -6,6 +6,10 @@ import Product from "@/models/Product";
 import { formatINR } from "@/lib/format";
 import DeleteProductButton from "@/components/admin/DeleteProductButton";
 
+// Uses searchParams so this already renders dynamically, but make it
+// explicit so it can't silently regress to a frozen static page later.
+export const dynamic = "force-dynamic";
+
 const iconProps = {
   viewBox: "0 0 24 24",
   fill: "none",

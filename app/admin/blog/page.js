@@ -5,6 +5,11 @@ import { connectDB } from "@/lib/db";
 import BlogPost from "@/models/BlogPost";
 import DeleteBlogButton from "@/components/admin/DeleteBlogButton";
 
+// This page has no cookies()/searchParams usage, so Next.js would otherwise
+// statically render it once at build time and freeze the list forever —
+// force it to re-query the database on every request.
+export const dynamic = "force-dynamic";
+
 const iconProps = {
   viewBox: "0 0 24 24",
   fill: "none",

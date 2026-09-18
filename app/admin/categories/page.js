@@ -7,6 +7,11 @@ import Product from "@/models/Product";
 import CategoryForm from "@/components/admin/CategoryForm";
 import DeleteCategoryButton from "@/components/admin/DeleteCategoryButton";
 
+// No cookies()/searchParams usage here, so Next.js would otherwise
+// statically render this page once at build time and freeze the list —
+// force it to re-query the database on every request.
+export const dynamic = "force-dynamic";
+
 const iconProps = {
   viewBox: "0 0 24 24",
   fill: "none",

@@ -5,6 +5,11 @@ import Order from "@/models/Order";
 import Product from "@/models/Product";
 import { formatINR } from "@/lib/format";
 
+// No cookies()/searchParams usage here, so Next.js would otherwise
+// statically render this dashboard once at build time and freeze the
+// stats — force it to re-query the database on every request.
+export const dynamic = "force-dynamic";
+
 /* ---------------- icons ---------------- */
 
 const iconProps = {

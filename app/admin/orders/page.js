@@ -4,6 +4,10 @@ import { connectDB } from "@/lib/db";
 import Order from "@/models/Order";
 import { formatINR } from "@/lib/format";
 
+// Uses searchParams so this already renders dynamically, but make it
+// explicit so it can't silently regress to a frozen static page later.
+export const dynamic = "force-dynamic";
+
 const STATUSES = ["all", "pending", "processing", "shipped", "delivered", "cancelled"];
 
 const iconProps = {
