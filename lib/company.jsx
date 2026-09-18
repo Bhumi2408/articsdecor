@@ -10,7 +10,7 @@ export const COMPANY = {
   phone: "+91 8860166301",
   phoneHref: "+918860166301",
 
-  website: "https://www.articsdecor.com",
+  website: "https://www.articsdecorr.com",
 
   paymentProcessor: "Razorpay",
   currency: "Indian Rupee (INR)",
