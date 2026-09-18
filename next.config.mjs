@@ -6,7 +6,7 @@ const nextConfig = {
     // uploaded photo can spike sharp's memory use heavily on a small VPS —
     // trimming this reduces the odds of that first-time resize failing
     // (which currently only clears up after a process restart).
-    deviceSizes: [640, 828, 1080, 1200, 1920],
+    deviceSizes: [384, 640, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
 
