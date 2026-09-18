@@ -2,6 +2,12 @@
 const nextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "placehold.co" }],
+    // Self-hosted image optimization needs the "sharp" native binary to
+    // match the server's exact platform/architecture. On this VPS it's
+    // producing broken/hanging responses for freshly uploaded images until
+    // the process is restarted. Serving images unoptimized removes that
+    // dependency entirely — <Image> still works, it just skips resizing.
+    unoptimized: true,
   },
 
   // Admin and API responses are always dynamic (fresh DB reads/writes) —
