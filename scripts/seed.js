@@ -32,8 +32,8 @@ async function seed() {
 
 
 
-  const adminEmail = process.env.ADMIN_SEED_EMAIL || "admin@lutediamonds.com";
-  const adminPassword = process.env.ADMIN_SEED_PASSWORD || "Admin@12345";
+  const adminEmail = process.env.ADMIN_SEED_EMAIL || "admin@articsdecorr.com";
+  const adminPassword = process.env.ADMIN_SEED_PASSWORD || "Artics@Decor56";
   const passwordHash = await bcrypt.hash(adminPassword, 10);
   await Admin.create({ name: "Artics Decorr Admin", email: adminEmail, passwordHash });
   console.log(`Seeded admin user: ${adminEmail} / ${adminPassword}`);
