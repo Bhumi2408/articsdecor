@@ -2,6 +2,12 @@
 const nextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "placehold.co" }],
+    // Default sizes go up to 3840px, which means resizing a large freshly
+    // uploaded photo can spike sharp's memory use heavily on a small VPS —
+    // trimming this reduces the odds of that first-time resize failing
+    // (which currently only clears up after a process restart).
+    deviceSizes: [640, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
 
   // Admin and API responses are always dynamic (fresh DB reads/writes) —
