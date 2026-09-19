@@ -15,12 +15,12 @@ const FILL =
    ek upar, ek neeche ho jaayega. */
 const categories = [
   { title: "Wicker Sofa Set", front: "/products/p1.png", back: "/products/p2.png", href: "/product-category/wicker-sofa-set" },
-  { title: "Poolside Lounger", front: "/products/p20.png", back: "/products/p21.png", href: "/product-category/poolside-lounger" },
+  { title: "Poolside Lounger", front: "/products/p20.png", back: "/products/p21.png", href: "/product-category//pool-furniture-manufacturer" },
   { title: "Service Trolley", front: "/products/p22.png", back: "/products/p23.png", href: "/product-category/service-trolley" },
   { title: "Garden Planters", front: "/products/p24.png", back: "/products/p25.png", href: "/product-category/garden-planters" },
   { title: "Rectangular Gazebo", front: "/products/p26.png", back: "/products/p27.png", href: "/product-category/rectangular-gazebo" },
   { title: "Bar Chair", front: "/products/p11.png", back: "/products/p12.png", href: "/product-category/bar-chair" },
-  { title: "Outdoor Daybeds", front: "/products/p6.png", back: "/products/p7.png", href: "/product-category/outdoor-daybeds" },
+  { title: "Outdoor Daybeds", front: "/products/p6.png", back: "/products/p7.png", href: "/product-category/cane-furniture" },
   { title: "Outdoor Dining Set", front: "/products/p8.png", back: "/products/p9.png", href: "/product-category/outdoor-dining-set" },
   { title: "Outdoor Umbrella", front: "/products/p28s.png", back: "/products/p29.png", href: "/product-category/outdoor-umbrella" },
   { title: "Dining Chair And Table", front: "/products/p30.png", back: "/products/p31.png", href: "/product-category/dining-chair-and-table" },

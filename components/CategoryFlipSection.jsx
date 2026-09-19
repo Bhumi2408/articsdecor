@@ -20,7 +20,7 @@ const categories = [
     title: "Outdoor Daybeds",
     frontImage: "/products/p6.png",
     backImage: "/products/p7.png",
-    href: "/product-category/outdoor-daybeds",
+    href: "/product-category/cane-furniture",
   },
   {
     title: "Outdoor Dining Set",

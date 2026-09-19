@@ -121,7 +121,7 @@ export default function ContactSection() {
 
           {/* EMAIL */}
           <a
-            href="mailto:articsdecor@gmail.com"
+            href="mailto:articsdecorr@gmail.com"
             className="group flex items-start gap-5 sm:px-0 lg:pl-8"
           >
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#123452] text-white transition-all duration-300 group-hover:bg-[#770800] group-hover:text-white">
@@ -137,7 +137,7 @@ export default function ContactSection() {
               </p>
 
               <p className="text-[15px] font-medium text-[#183957] transition-colors group-hover:text-[#770800]">
-                articsdecor@gmail.com
+                articsdecorr@gmail.com
               </p>
 
               <span className="mt-1 block text-[12px] text-[#8793a0]">

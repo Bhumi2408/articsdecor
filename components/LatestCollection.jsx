@@ -5,7 +5,7 @@ const collections = {
   poolside: {
     title: "POOLSIDE\nLOUNGER",
     image: "/products/p10.png",
-    href: "/product-category/poolside-lounger",
+    href: "/product-category/pool-furniture-manufacturer",
   },
 
   wicker: {
@@ -17,7 +17,7 @@ const collections = {
   daybed: {
     title: "OUTDOOR\nDAYBED",
     image: "/products/p13.png",
-    href: "/product-category/outdoor-daybeds",
+    href: "/product-category/cane-furniture",
   },
 };
 

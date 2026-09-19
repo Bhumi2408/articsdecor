@@ -217,10 +217,10 @@ export default function Footer() {
                 <p className="text-[16px] leading-[1.3] text-white">
                   <span className="font-bold">Email:</span>{" "}
                   <a
-                    href="mailto:articsdecor@gmail.com"
+                    href="mailto:articsdecorr@gmail.com"
                     className="text-[15px] text-[#E0A63F] transition-opacity hover:opacity-80"
                   >
-                    articsdecor@gmail.com
+                    articsdecorr@gmail.com
                   </a>
                 </p>
               </div>
@@ -229,7 +229,7 @@ export default function Footer() {
 
           {/* ==================== COPYRIGHT ==================== */}
           <p className="mt-auto pt-14 text-[17px] text-white lg:text-right">
-            Copyright &copy; {new Date().getFullYear()} ARTICS D&Egrave;COR |
+            Copyright &copy; {new Date().getFullYear()} ARTICS DECORR |
             Powered by{" "}
             <Link
               href="https://www.cybertricksmedia.com/"

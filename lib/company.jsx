@@ -5,7 +5,7 @@ export const COMPANY = {
   address:
     "A4/3/15, South Side, G.T. Road, Industrial Area, Vijay Nagar, Ghaziabad – 201009, Uttar Pradesh, India",
 
-  email: "articsdecor@gmail.com",
+  email: "articsdecorr@gmail.com",
 
   phone: "+91 8860166301",
   phoneHref: "+918860166301",
