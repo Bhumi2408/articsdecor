@@ -207,11 +207,7 @@ function CategoryImageCard({ image, title, href }) {
         src={image}
         alt={title}
         fill
-        sizes="
-          (max-width: 768px) 100vw,
-          (max-width: 1200px) 33vw,
-          31vw
-        "
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 31vw"
         className="
           object-cover
           transition-transform

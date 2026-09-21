@@ -49,6 +49,23 @@ export default function CategoryFlipSection() {
   return (
     <section className="w-full bg-white px-6 pb-10 pt-20 md:px-10 lg:px-16">
       <div className="mx-auto max-w-[1600px]">
+        <div className="mb-12 text-center">
+          <span className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.3em] text-[#8b5e3c]">
+            Our Categories
+          </span>
+
+          <h2 className="font-serif text-3xl font-semibold tracking-tight text-[#102f4f] sm:text-4xl md:text-[42px]">
+            Shop By Category
+          </h2>
+
+          <div className="mx-auto mt-5 flex items-center justify-center gap-3">
+            <span className="h-px w-10 bg-[#d8d1ca]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#8b5e3c]" />
+            <span className="h-px w-10 bg-[#d8d1ca]" />
+          </div>
+
+         
+        </div>
 
         {/* CARDS */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">

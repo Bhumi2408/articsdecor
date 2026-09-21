@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { ShoppingBag, Heart } from "lucide-react";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const LOGO_SRC = "/logos.png";
 
@@ -423,6 +424,9 @@ const NAV_LINKS = [
                 className="mr-3.5 hidden h-[26px] w-px bg-[var(--ad-line)] xl:block"
               />
 
+              <LanguageSwitcher className="hidden xl:flex" />
+              <LanguageSwitcher variant="compact" className="xl:hidden" />
+
               <button
                 type="button"
                 onClick={() => setSearchOpen((s) => !s)}
@@ -432,7 +436,7 @@ const NAV_LINKS = [
                 <Ico.search className="h-5 w-5 sm:h-[21px] sm:w-[21px]" />
               </button>
 
-              <div className="flex items-center gap-4">
+              <div className="hidden items-center gap-4 xl:flex">
                 {/* WISHLIST */}
                 <Link
                   href="/wishlist"
@@ -507,7 +511,11 @@ const NAV_LINKS = [
                 </Link>
               </div>
 
-              <Link href="/account" aria-label="Account" className={iconBtn}>
+              <Link
+                href="/account"
+                aria-label="Account"
+                className={iconBtn + " hidden xl:grid"}
+              >
                 <Ico.user className="h-5 w-5 sm:h-[21px] sm:w-[21px]" />
               </Link>
 
@@ -647,6 +655,10 @@ const NAV_LINKS = [
           })}
         </nav>
 
+        <div className="border-b border-[#F5F1EA] py-6">
+          <LanguageSwitcher variant="mobile" />
+        </div>
+
         <div className="px-5 pb-9 pt-6">
           <p className="mb-2 text-[12.5px] leading-relaxed text-[var(--ad-ink-soft)]">
             A4/3/15, G.T. Road, Vijay Nagar, Ghaziabad 201009
@@ -659,6 +671,10 @@ const NAV_LINKS = [
           </a>
         </div>
       </aside>
+
+      {/* Google Translate mounts its <select> here; kept off-screen and
+          driven entirely by LanguageSwitcher's own dropdown UI. */}
+      <div id="google_translate_element" className="hidden" />
     </>
   );
 }

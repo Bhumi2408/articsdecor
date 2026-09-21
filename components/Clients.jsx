@@ -77,11 +77,7 @@ export default function Clients() {
                   src={client.image}
                   alt={client.name}
                   fill
-                  sizes="
-                    (max-width: 768px) 45vw,
-                    (max-width: 1024px) 30vw,
-                    16vw
-                  "
+                  sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 16vw"
                   className="object-contain"
                 />
               </div>

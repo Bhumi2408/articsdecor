@@ -13,6 +13,22 @@ body {
   --ad-line: #EDE8DF;
 }
 
+/* Google Translate widget: keep it invisible and undo the top-of-page
+   banner/highlight styling it injects — LanguageSwitcher provides the UI. */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-gadget-icon {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
 
 .category-flip-card {
   perspective: 1400px;

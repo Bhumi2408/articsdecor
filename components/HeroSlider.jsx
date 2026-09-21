@@ -1,111 +1,43 @@
 "use client";
 
-import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCreative, Autoplay, Pagination } from "swiper/modules";
+import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 
-import "swiper/css";
-import "swiper/css/effect-creative";
-import "swiper/css/pagination";
-
-const slides = [
-  {
-    desktop: "/home/banner-1s.jpeg",
-    mobile: "/home/mobile-banner-1.png",
-    alt: "Outdoor wicker sofa set by Artics Decorr",
-  },
-  {
-    desktop: "/home/banner-2s.jpeg",
-    mobile: "/home/mobile-banner2.jpeg",
-    alt: "Poolside lounger collection",
-  },
-  {
-    desktop: "/home/banner-3.jpeg",
-    mobile: "/home/mobile-banner-3.png",
-    alt: "Garden dining set in weatherproof wicker",
-  },
-  {
-    desktop: "/home/banner-4.jpeg",
-    mobile: "/home/mobile-banner-4.png",
-    alt: "Outdoor daybed with canopy",
-  },
-];
+// Drop the hero video file at public/home/hero-video.mp4 (poster image is
+// shown while it loads / if it fails to load).
+const VIDEO_SRC = "/artics-video.mp4";
+const POSTER_SRC = "/home/banner-1s.jpeg";
 
 export default function HeroSlider() {
   return (
-    <section className="relative w-full bg-black">
-      <Swiper
-        modules={[EffectCreative, Autoplay, Pagination]}
-        effect="creative"
+    <section className="relative h-[100svh] max-h-[400px] md:max-h-[700px] min-h-[420px] w-full overflow-hidden bg-black">
+      <video
+        autoPlay
+        muted
         loop
-        grabCursor
-        speed={1000}
-        autoplay={{
-          delay: 5000,
-          disableOnInteraction: false,
-        }}
-        pagination={{ clickable: true }}
-        creativeEffect={{
-          limitProgress: 1,
-          perspective: false,
-          prev: {
-            translate: ["-22%", 0, 0],
-            opacity: 1,
-            scale: 1,
-          },
-          next: {
-            translate: ["100%", 0, 0],
-            opacity: 1,
-            scale: 1,
-          },
-        }}
-        style={{
-          "--swiper-pagination-color": "#BE8C2C",
-          "--swiper-pagination-bullet-inactive-color": "#ffffff",
-          "--swiper-pagination-bullet-inactive-opacity": "0.5",
-          "--swiper-pagination-bullet-size": "9px",
-          "--swiper-pagination-bullet-horizontal-gap": "5px",
-          "--swiper-pagination-bottom": "24px",
-        }}
-        className="
-          hero-slider
-          h-[570px]
-          w-full
-          sm:h-[380px]
-          lg:h-[670px]
-        "
+        playsInline
+        poster={POSTER_SRC}
+        className="absolute inset-0 h-full w-full object-cover"
       >
-        {slides.map((slide, i) => (
-          <SwiperSlide
-            key={slide.desktop}
-            className="relative overflow-hidden bg-black"
-          >
-            {/* DESKTOP IMAGE */}
-            <div className="absolute inset-0 hidden sm:block">
-              <Image
-                src={slide.desktop}
-                alt={slide.alt}
-                fill
-                priority={i === 0}
-                sizes="100vw"
-                className="object-cover"
-              />
-            </div>
+        <source src={VIDEO_SRC} type="video/mp4" />
+      </video>
 
-            {/* MOBILE IMAGE */}
-            <div className="absolute inset-0 block sm:hidden">
-              <Image
-                src={slide.mobile}
-                alt={slide.alt}
-                fill
-                priority={i === 0}
-                sizes="100vw"
-                className="object-cover"
-              />
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      {/* light overlay so the video stays legible under any future copy */}
+      <div className="absolute inset-0 bg-black/15" />
+
+      {/* bouncing "Shop Now" scroll cue */}
+      <Link
+        href="/shop"
+        className="group absolute inset-x-0 bottom-8 mx-auto flex w-fit flex-col items-center gap-2 text-white sm:bottom-10"
+      >
+        <span className="text-[11px] font-semibold uppercase tracking-[0.3em]">
+          Shop Now
+        </span>
+        <ChevronDown
+          className="h-6 w-6 animate-bounce transition-transform group-hover:translate-y-0.5"
+          strokeWidth={1.8}
+        />
+      </Link>
     </section>
   );
 }
