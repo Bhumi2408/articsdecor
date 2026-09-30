@@ -29,6 +29,30 @@ body {
   box-shadow: none !important;
 }
 
+/* Clients marquee: three independent rows, direction set per-row via
+   .marquee-ltr / .marquee-rtl, paused on hover of that row only. */
+@keyframes marquee-rtl {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marquee-ltr {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+.marquee-track.marquee-rtl {
+  animation-name: marquee-rtl;
+}
+
+.marquee-track.marquee-ltr {
+  animation-name: marquee-ltr;
+}
+
+.marquee-row:hover .marquee-track {
+  animation-play-state: paused;
+}
+
 
 .category-flip-card {
   perspective: 1400px;
