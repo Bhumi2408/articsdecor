@@ -7,27 +7,43 @@ export async function POST(req) {
   const { orderId } = await req.json();
   if (!orderId) return NextResponse.json({ error: "Order id required" }, { status: 400 });
 
-  await connectDB();
-  const order = await Order.findById(orderId);
-  if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    console.error("RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET are not set on this server");
+    return NextResponse.json(
+      { error: "Payments are not configured on the server yet." },
+      { status: 500 }
+    );
+  }
 
-  const razorpayOrder = await createRazorpayOrder({
-    amount: order.total,
-    receipt: order.orderNumber,
-  });
+  try {
+    await connectDB();
+    const order = await Order.findById(orderId);
+    if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
 
-  order.razorpayOrderId = razorpayOrder.id;
-  order.paymentMethod = "razorpay";
-  await order.save();
+    const razorpayOrder = await createRazorpayOrder({
+      amount: order.total,
+      receipt: order.orderNumber,
+    });
 
-  return NextResponse.json({
-    keyId: process.env.RAZORPAY_KEY_ID,
-    razorpayOrderId: razorpayOrder.id,
-    amount: razorpayOrder.amount,
-    currency: razorpayOrder.currency,
-    orderNumber: order.orderNumber,
-    name: order.shippingAddress?.fullName || "",
-    email: order.shippingAddress?.email || "",
-    phone: order.shippingAddress?.phone || "",
-  });
+    order.razorpayOrderId = razorpayOrder.id;
+    order.paymentMethod = "razorpay";
+    await order.save();
+
+    return NextResponse.json({
+      keyId: process.env.RAZORPAY_KEY_ID,
+      razorpayOrderId: razorpayOrder.id,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
+      orderNumber: order.orderNumber,
+      name: order.shippingAddress?.fullName || "",
+      email: order.shippingAddress?.email || "",
+      phone: order.shippingAddress?.phone || "",
+    });
+  } catch (err) {
+    console.error("RAZORPAY CREATE ORDER ERROR:", err);
+    return NextResponse.json(
+      { error: err.message || "Could not start payment" },
+      { status: 500 }
+    );
+  }
 }

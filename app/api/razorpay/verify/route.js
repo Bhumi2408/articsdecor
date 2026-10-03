@@ -15,30 +15,38 @@ export async function POST(req) {
     return NextResponse.json({ error: "Missing payment details" }, { status: 400 });
   }
 
-  await connectDB();
-  const order = await Order.findOne({ orderNumber });
-  if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  try {
+    await connectDB();
+    const order = await Order.findOne({ orderNumber });
+    if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
 
-  if (order.razorpayOrderId !== razorpay_order_id) {
-    return NextResponse.json({ error: "Order mismatch" }, { status: 400 });
-  }
+    if (order.razorpayOrderId !== razorpay_order_id) {
+      return NextResponse.json({ error: "Order mismatch" }, { status: 400 });
+    }
 
-  const valid = verifyPaymentSignature({
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-  });
+    const valid = verifyPaymentSignature({
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    });
 
-  if (!valid) {
-    order.paymentStatus = "failed";
+    if (!valid) {
+      order.paymentStatus = "failed";
+      await order.save();
+      return NextResponse.json({ error: "Invalid payment signature" }, { status: 400 });
+    }
+
+    order.paymentStatus = "paid";
+    order.orderStatus = "processing";
+    order.razorpayPaymentId = razorpay_payment_id;
     await order.save();
-    return NextResponse.json({ error: "Invalid payment signature" }, { status: 400 });
+
+    return NextResponse.json({ ok: true, orderNumber: order.orderNumber });
+  } catch (err) {
+    console.error("RAZORPAY VERIFY ERROR:", err);
+    return NextResponse.json(
+      { error: err.message || "Payment verification failed" },
+      { status: 500 }
+    );
   }
-
-  order.paymentStatus = "paid";
-  order.orderStatus = "processing";
-  order.razorpayPaymentId = razorpay_payment_id;
-  await order.save();
-
-  return NextResponse.json({ ok: true, orderNumber: order.orderNumber });
 }
