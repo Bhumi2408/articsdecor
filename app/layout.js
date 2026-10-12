@@ -1,9 +1,12 @@
 import { Baloo_2 } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import { Toaster } from "sonner";
+
+const GA_MEASUREMENT_ID = "G-T64HZMY1LV";
 
 const baloo2 = Baloo_2({
   variable: "--font-baloo2",
@@ -23,6 +26,10 @@ export const metadata = {
 
   icons: {
     icon: "/logos.png",
+  },
+
+  verification: {
+    google: "ZGqm0gpoYbpuGXHShKbZ4cwXq0kNoxqzQTpx28mlWMY",
   },
 };
 
@@ -55,6 +62,20 @@ export default function RootLayout({ children }) {
   <Footer />
 
   <BottomNav />
+
+  {/* Google tag (gtag.js) */}
+  <Script
+    src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+    strategy="afterInteractive"
+  />
+  <Script id="google-analytics" strategy="afterInteractive">
+    {`
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${GA_MEASUREMENT_ID}');
+    `}
+  </Script>
 </body>
     </html>
   );
