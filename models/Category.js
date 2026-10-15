@@ -8,6 +8,7 @@ const CategorySchema = new mongoose.Schema(
     image: { type: String, default: "" },
     metaTitle: { type: String, default: "", trim: true },
     metaDescription: { type: String, default: "", trim: true },
+    keywords: [{ type: String }],
     parent: { type: mongoose.Schema.Types.ObjectId, ref: "Category", default: null },
   },
   { timestamps: true }

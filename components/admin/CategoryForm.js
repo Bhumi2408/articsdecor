@@ -31,6 +31,7 @@ export default function CategoryForm({ initialCategory }) {
     image: initialCategory?.image || "",
     metaTitle: initialCategory?.metaTitle || "",
     metaDescription: initialCategory?.metaDescription || "",
+    keywords: initialCategory?.keywords?.join(", ") || "",
   });
   const [slugTouched, setSlugTouched] = useState(isEdit);
   const [error, setError] = useState("");
@@ -54,10 +55,17 @@ export default function CategoryForm({ initialCategory }) {
     try {
       const url = isEdit ? `/api/categories/${initialCategory._id}` : "/api/categories";
       const method = isEdit ? "PUT" : "POST";
+      const payload = {
+        ...form,
+        keywords: form.keywords
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+      };
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not save category");
@@ -65,7 +73,7 @@ export default function CategoryForm({ initialCategory }) {
       if (isEdit) {
         router.push("/admin/categories");
       } else {
-        setForm({ name: "", slug: "", description: "", image: "", metaTitle: "", metaDescription: "" });
+        setForm({ name: "", slug: "", description: "", image: "", metaTitle: "", metaDescription: "", keywords: "" });
         setSlugTouched(false);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
@@ -158,6 +166,11 @@ export default function CategoryForm({ initialCategory }) {
             <div>
               <label className={labelClass}>Meta Description</label>
               <textarea value={form.metaDescription} maxLength={160} rows={3} placeholder="Defaults to the category description" onChange={(e) => setForm({ ...form, metaDescription: e.target.value })} className={`${inputClass} resize-y`} />
+            </div>
+            <div>
+              <label className={labelClass}>Meta Keywords</label>
+              <input value={form.keywords} placeholder="wicker sofa, outdoor furniture, rehau" onChange={(e) => setForm({ ...form, keywords: e.target.value })} className={inputClass} />
+              <p className="mt-1.5 text-[12.5px] text-[#9A9A9A]">Comma separated.</p>
             </div>
           </div>
         </div>

@@ -33,6 +33,7 @@ export async function generateMetadata({ params }) {
       category.metaDescription ||
       category.description ||
       undefined,
+    keywords: category.keywords?.length ? category.keywords : undefined,
   };
 }
 

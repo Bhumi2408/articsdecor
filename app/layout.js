@@ -1,10 +1,12 @@
 import { Baloo_2 } from "next/font/google";
 import Script from "next/script";
+import { headers } from "next/headers";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import { Toaster } from "sonner";
+import { SITE_URL } from "@/lib/siteUrl";
 
 const GA_MEASUREMENT_ID = "G-T64HZMY1LV";
 
@@ -13,25 +15,42 @@ const baloo2 = Baloo_2({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "Artics Decorr - Premium Outdoor Furniture Manufacturer in India",
+// A function (not a static object) so every page gets its own
+// <link rel="canonical"> automatically — proxy.js forwards the current
+// path as the x-pathname request header, read here. Pages that need their
+// own title/description (product, category, blog) still declare their own
+// generateMetadata; since they don't set `alternates`, this canonical value
+// carries through unchanged.
+export async function generateMetadata() {
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || "/";
 
-  description:
-    "Artics Decorr is a Premium Outdoor Furniture Manufacturer in India offering durable, stylish and weatherproof designs for outdoor spaces. Contact us now!",
+  return {
+    metadataBase: new URL(SITE_URL),
 
-  keywords: [
-    "Premium Outdoor Furniture Manufacturer in India",
-    "Artics Decorr",
-  ],
+    title: "Artics Decorr - Premium Outdoor Furniture Manufacturer in India",
 
-  icons: {
-    icon: "/logos.png",
-  },
+    description:
+      "Artics Decorr is a Premium Outdoor Furniture Manufacturer in India offering durable, stylish and weatherproof designs for outdoor spaces. Contact us now!",
 
-  verification: {
-    google: "ZGqm0gpoYbpuGXHShKbZ4cwXq0kNoxqzQTpx28mlWMY",
-  },
-};
+    keywords: [
+      "Premium Outdoor Furniture Manufacturer in India",
+      "Artics Decorr",
+    ],
+
+    icons: {
+      icon: "/logos.png",
+    },
+
+    verification: {
+      google: "ZGqm0gpoYbpuGXHShKbZ4cwXq0kNoxqzQTpx28mlWMY",
+    },
+
+    alternates: {
+      canonical: pathname,
+    },
+  };
+}
 
 export default function RootLayout({ children }) {
   return (
